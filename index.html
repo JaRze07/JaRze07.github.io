@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Youthful Travel Recommender</title>
 <style>
-body{
+body {
   margin:0;padding:0;
   font-family:'Helvetica Neue',Arial,sans-serif;
   background: linear-gradient(135deg, #FFDEE9, #B5FFFC);
@@ -13,15 +13,18 @@ body{
   align-items:center;justify-content:flex-start;
   min-height:100vh;
   color:#333;
+  box-sizing:border-box;
+}
+*, *:before, *:after {
+  box-sizing:inherit;
 }
 
-/* Header */
-header{
+header {
   width:100%;
   text-align:center;
   padding:40px 0 0;
 }
-header h1{
+header h1 {
   margin:0;
   font-size:30px;
   color:#333;
@@ -30,11 +33,11 @@ header h1{
 }
 
 /* Wizard Container */
-.wizard{
+.wizard {
   background:rgba(255,255,255,0.95);
   width:90%;
   max-width:500px;
-  margin:100px 0 40px; /* moved down */
+  margin:60px 0 40px;
   padding:30px;
   border-radius:20px;
   box-shadow:0 10px 30px rgba(0,0,0,0.1);
@@ -44,59 +47,53 @@ header h1{
   position:relative;
 }
 
-.wizard-step{
+.wizard-step {
   display:none;
   flex-direction:column;
   gap:20px;
 }
-.wizard-step.active{
+.wizard-step.active {
   display:flex;
 }
 
-label{
+label {
   font-weight:bold;
   font-size:18px;
   margin-bottom:5px;
   color:#444;
 }
 
-select, .activities-container{
-  width:100%;
-  padding:12px;
-  border:1px solid #ccc;
-  border-radius:8px;
-  background:#fff;
-  font-size:16px;
-  color:#333;
-}
-
-.activities-container{
+/* Checkbox List Styles */
+.checkbox-list {
   display:flex;
-  flex-wrap:wrap;
+  flex-direction:column;
   gap:10px;
 }
-.activity-item{
-  background:#eee;
-  border-radius:20px;
-  padding:8px 15px;
-  cursor:pointer;
-  user-select:none;
-  transition:background 0.3s,color 0.3s;
-  font-size:14px;
-  color:#555;
+.checkbox-item {
+  display:flex;
+  align-items:center;
+  gap:10px;
 }
-.activity-item.selected{
-  background:#FF4081;
-  color:#fff;
+.checkbox-item input[type="checkbox"] {
+  width:20px;
+  height:20px;
+  accent-color:#FF4081;
+  cursor:pointer;
+}
+.checkbox-label {
+  font-size:16px;
+  color:#555;
+  cursor:pointer;
 }
 
-.button-group{
+/* Button Group */
+.button-group {
   display:flex;
   justify-content:space-between;
   gap:10px;
 }
 
-button{
+button {
   flex:1;
   padding:12px 25px;
   border:none;
@@ -109,19 +106,19 @@ button{
   font-weight:bold;
   text-align:center;
 }
-button:hover{
+button:hover {
   background:#E2336D;
 }
-.prev-btn{
+.prev-btn {
   background:#B0BEC5;
   color:#fff;
 }
-.prev-btn:hover{
+.prev-btn:hover {
   background:#9CA9AE;
 }
 
 /* Results Section */
-.results-section{
+.results-section {
   width:90%;
   max-width:500px;
   position:relative;
@@ -131,9 +128,10 @@ button:hover{
   flex-direction:column;
   align-items:center;
   margin-bottom:50px;
+  padding:0 10px; /* padding to avoid card cut-off on sides */
 }
 
-.swipe-hint{
+.swipe-hint {
   text-align:center;
   margin-bottom:20px;
   color:#333;
@@ -142,23 +140,22 @@ button:hover{
   text-shadow:0 1px 2px rgba(255,255,255,0.7);
 }
 
-.card-stack{
+.card-stack {
   position:relative;
   width:100%;
   height:100%;
 }
 
 /* Card Style */
-.card{
+.card {
   position:absolute;
   top:50%;
   left:50%;
   transform:translate(-50%,-50%);
-  width:100%;
-  max-width:100%;
+  width:95%; /* Slightly smaller to avoid cutoff */
   background:#fff;
   border-radius:20px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.1);
+  box-shadow:0 4px 15px rgba(0,0,0,0.1);
   padding:30px 20px;
   text-align:center;
   transition:transform 0.3s;
@@ -166,22 +163,24 @@ button:hover{
   display:flex;
   flex-direction:column;
   justify-content:center;
+  max-height:80%;
 }
-.card h2{
+.card h2 {
   margin:0 0 20px;
   font-size:24px;
   color:#333;
   font-weight:bold;
 }
-.card p{
+.card p {
   margin:0;
   font-size:16px;
   line-height:1.6;
   color:#555;
+  margin-bottom:20px;
 }
-.card a{
+.card a {
   display:inline-block;
-  margin-top:25px;
+  margin-top:10px;
   background:#4CAF50;
   color:#fff;
   padding:12px 25px;
@@ -190,12 +189,12 @@ button:hover{
   font-size:16px;
   font-weight:bold;
 }
-.card a:hover{
+.card a:hover {
   background:#43a047;
 }
 
 /* Swipe Buttons (Tinder-style) */
-.actions{
+.actions {
   position:absolute;
   bottom:20px;
   width:100%;
@@ -206,7 +205,7 @@ button:hover{
   display:none;
 }
 
-.action-btn{
+.action-btn {
   width:60px;
   height:60px;
   background:#fff;
@@ -218,47 +217,49 @@ button:hover{
   cursor:pointer;
   transition:transform 0.2s;
 }
-.action-btn:hover{
+.action-btn:hover {
   transform:scale(1.1);
 }
-.action-btn:active{
+.action-btn:active {
   transform:scale(0.95);
 }
-.action-btn.reject{
+.action-btn.reject {
   background:#FF5252;
 }
-.action-btn.like{
+.action-btn.like {
   background:#4CAF50;
 }
-.action-btn svg{
+.action-btn.undo {
+  background:#FFC107;
+}
+.action-btn svg {
   width:30px;height:30px;
   fill:#fff;
 }
 
-/* Responsive Adjustments */
-@media (max-width:600px){
-  .wizard{
-    margin-top:60px;
+@media (max-width:600px) {
+  .wizard {
+    margin-top:40px;
     padding:20px;
   }
-  .card{
+  .card {
     padding:20px;
   }
-  .card h2{
+  .card h2 {
     font-size:20px;
   }
-  .card p{
+  .card p {
     font-size:14px;
   }
-  .card a{
+  .card a {
     font-size:14px;
     padding:10px 15px;
   }
-  .action-btn{
+  .action-btn {
     width:50px;
     height:50px;
   }
-  .action-btn svg{
+  .action-btn svg {
     width:24px;height:24px;
   }
 }
@@ -270,55 +271,123 @@ button:hover{
 </header>
 
 <div class="wizard">
+  <!-- Regions -->
   <div class="wizard-step step-1 active">
-    <label for="regionFilter">Select Region:</label>
-    <select id="regionFilter">
-      <option value="">Any</option>
-      <option value="Europe">Europe</option>
-      <option value="Asia">Asia</option>
-      <option value="Americas">Americas</option>
-      <option value="Oceania">Oceania</option>
-      <option value="Africa">Africa</option>
-    </select>
+    <label>Select Regions (multi-select):</label>
+    <div class="checkbox-list" id="regionList">
+      <div class="checkbox-item">
+        <input type="checkbox" id="regionAll" />
+        <label class="checkbox-label" for="regionAll">Select All</label>
+      </div>
+      <div class="checkbox-item">
+        <input type="checkbox" id="regionEurope" value="Europe"/>
+        <label class="checkbox-label" for="regionEurope">Europe</label>
+      </div>
+      <div class="checkbox-item">
+        <input type="checkbox" id="regionAsia" value="Asia"/>
+        <label class="checkbox-label" for="regionAsia">Asia</label>
+      </div>
+      <div class="checkbox-item">
+        <input type="checkbox" id="regionAmericas" value="Americas"/>
+        <label class="checkbox-label" for="regionAmericas">Americas</label>
+      </div>
+      <div class="checkbox-item">
+        <input type="checkbox" id="regionOceania" value="Oceania"/>
+        <label class="checkbox-label" for="regionOceania">Oceania</label>
+      </div>
+      <div class="checkbox-item">
+        <input type="checkbox" id="regionAfrica" value="Africa"/>
+        <label class="checkbox-label" for="regionAfrica">Africa</label>
+      </div>
+    </div>
     <div class="button-group">
       <button class="next-btn">Next</button>
     </div>
   </div>
+
+  <!-- Budget -->
   <div class="wizard-step step-2">
-    <label for="budgetFilter">Budget Level:</label>
-    <select id="budgetFilter">
-      <option value="">Any</option>
-      <option value="Cheap">Cheap</option>
-      <option value="Mid-range">Mid-range</option>
-      <option value="Luxury">Luxury</option>
-    </select>
+    <label>Select Budget Levels (multi-select):</label>
+    <div class="checkbox-list" id="budgetList">
+      <div class="checkbox-item">
+        <input type="checkbox" id="budgetAll"/>
+        <label class="checkbox-label" for="budgetAll">Select All</label>
+      </div>
+      <div class="checkbox-item">
+        <input type="checkbox" id="budgetCheap" value="Cheap"/>
+        <label class="checkbox-label" for="budgetCheap">Cheap</label>
+      </div>
+      <div class="checkbox-item">
+        <input type="checkbox" id="budgetMid" value="Mid-range"/>
+        <label class="checkbox-label" for="budgetMid">Mid-range</label>
+      </div>
+      <div class="checkbox-item">
+        <input type="checkbox" id="budgetLuxury" value="Luxury"/>
+        <label class="checkbox-label" for="budgetLuxury">Luxury</label>
+      </div>
+    </div>
     <div class="button-group">
       <button class="prev-btn">Back</button>
       <button class="next-btn">Next</button>
     </div>
   </div>
+
+  <!-- Activities -->
   <div class="wizard-step step-3">
     <label>Select Activities (multi-select):</label>
-    <div class="activities-container" id="activitiesContainer">
-      <div class="activity-item" data-activity="Beach">Beach</div>
-      <div class="activity-item" data-activity="Hiking">Hiking</div>
-      <div class="activity-item" data-activity="Nightlife">Nightlife</div>
-      <div class="activity-item" data-activity="Culture">Culture</div>
-      <div class="activity-item" data-activity="Shopping">Shopping</div>
+    <div class="checkbox-list" id="activitiesList">
+      <div class="checkbox-item">
+        <input type="checkbox" id="activitiesAll"/>
+        <label class="checkbox-label" for="activitiesAll">Select All</label>
+      </div>
+      <div class="checkbox-item">
+        <input type="checkbox" id="actBeach" value="Beach"/>
+        <label class="checkbox-label" for="actBeach">Beach</label>
+      </div>
+      <div class="checkbox-item">
+        <input type="checkbox" id="actHiking" value="Hiking"/>
+        <label class="checkbox-label" for="actHiking">Hiking</label>
+      </div>
+      <div class="checkbox-item">
+        <input type="checkbox" id="actNightlife" value="Nightlife"/>
+        <label class="checkbox-label" for="actNightlife">Nightlife</label>
+      </div>
+      <div class="checkbox-item">
+        <input type="checkbox" id="actCulture" value="Culture"/>
+        <label class="checkbox-label" for="actCulture">Culture</label>
+      </div>
+      <div class="checkbox-item">
+        <input type="checkbox" id="actShopping" value="Shopping"/>
+        <label class="checkbox-label" for="actShopping">Shopping</label>
+      </div>
     </div>
     <div class="button-group">
       <button class="prev-btn">Back</button>
       <button class="next-btn">Next</button>
     </div>
   </div>
+
+  <!-- Climate -->
   <div class="wizard-step step-4">
-    <label for="climateFilter">Climate:</label>
-    <select id="climateFilter">
-      <option value="">Any</option>
-      <option value="Warm">Warm</option>
-      <option value="Cold">Cold</option>
-      <option value="Temperate">Temperate</option>
-    </select>
+    <label>Select Climates (multi-select):</label>
+    <div class="checkbox-list" id="climateList">
+      <div class="checkbox-item">
+        <input type="checkbox" id="climateAll"/>
+        <label class="checkbox-label" for="climateAll">Select All</label>
+      </div>
+      <div class="checkbox-item">
+        <input type="checkbox" id="climateWarm" value="Warm"/>
+        <label class="checkbox-label" for="climateWarm">Warm</label>
+      </div>
+      <div class="checkbox-item">
+        <input type="checkbox" id="climateCold" value="Cold"/>
+        <label class="checkbox-label" for="climateCold">Cold</label>
+      </div>
+      <div class="checkbox-item">
+        <input type="checkbox" id="climateTemperate" value="Temperate"/>
+        <label class="checkbox-label" for="climateTemperate">Temperate</label>
+      </div>
+    </div>
     <div class="button-group">
       <button class="prev-btn">Back</button>
       <button class="finish-btn">Find Destinations</button>
@@ -331,8 +400,19 @@ button:hover{
   <div class="card-stack" id="cardStack"></div>
   <div class="actions">
     <div class="action-btn reject" id="rejectBtn">
-      <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 
-      17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+      <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 
+      6.41 10.59 12 5 17.59 6.41 19 12 
+      13.41 17.59 19 19 17.59 13.41 12z"/>
+      </svg>
+    </div>
+    <div class="action-btn undo" id="undoBtn">
+      <svg viewBox="0 0 24 24"><path d="M12 5c-3.86 0-7 
+      3.14-7 7H2l3.89 3.89.07.14L10 12H7c0-2.76 
+      2.24-5 5-5s5 2.24 5 5-2.24 5-5 
+      5c-1.64 0-3.09-.8-4-2l-1.46 1.46C8.02 
+      17.88 9.92 19 12 19c3.86 0 7-3.14 
+      7-7s-3.14-7-7-7z"/>
+      </svg>
     </div>
     <div class="action-btn like" id="likeBtn">
       <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 
@@ -346,11 +426,14 @@ button:hover{
 </div>
 
 <script>
-const GSheetURL="https://docs.google.com/spreadsheets/d/e/2PACX-1vQbq36KXieC6aKe3KfwM7162IGCZE-WAKHJ7xyScSLrvs92G64vp4BkFaAn0ikrObiBY0jZUYX1Ugpz/pub?gid=0&single=true&output=csv";
+const GSheetURL="YOUR_GOOGLE_SHEET_CSV_LINK_HERE";
 
 let allData=[];
+let swipedStack=[]; // to store swiped cards for undo
 const steps=document.querySelectorAll('.wizard-step');
 let currentStep=0;
+
+// Wizard nav
 document.querySelectorAll('.next-btn').forEach(btn=>{
   btn.addEventListener('click',()=>{
     if(currentStep<steps.length-1){
@@ -374,10 +457,36 @@ document.querySelector('.finish-btn').addEventListener('click',()=>{
   showResults();
 });
 
-document.getElementById('activitiesContainer').addEventListener('click',e=>{
-  if(e.target.classList.contains('activity-item')){
-    e.target.classList.toggle('selected');
-  }
+// Set up "Select All" toggles
+setupSelectAll('regionList','regionAll');
+setupSelectAll('budgetList','budgetAll');
+setupSelectAll('activitiesList','activitiesAll');
+setupSelectAll('climateList','climateAll');
+
+function setupSelectAll(containerId,allId){
+  const container=document.getElementById(containerId);
+  const allCheck=document.getElementById(allId);
+  const checks=[...container.querySelectorAll('input[type=checkbox]')].filter(c=>c!==allCheck);
+  
+  allCheck.addEventListener('change',()=>{
+    checks.forEach(ch=>{ch.checked=allCheck.checked});
+  });
+  
+  checks.forEach(ch=>{
+    ch.addEventListener('change',()=>{
+      if(!ch.checked){
+        allCheck.checked=false;
+      }else if(checks.every(cc=>cc.checked)){
+        allCheck.checked=true;
+      }
+    });
+  });
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  fetchData().then(data=>{
+    allData=data;
+  });
 });
 
 async function fetchData(){
@@ -398,29 +507,36 @@ function csvToArray(str,delimiter=","){
   return arr;
 }
 
-function filterData(data,region,budget,activities,climate){
+function getSelectedValues(containerId,allId){
+  const container=document.getElementById(containerId);
+  const allCheck=document.getElementById(allId);
+  const checks=[...container.querySelectorAll('input[type=checkbox]')].filter(c=>c!==allCheck);
+  if(allCheck.checked) {
+    // If select all is checked and no others unchecked, means all selected
+    return checks.map(c=>c.value).filter(v=>v); // All except empty
+  } else {
+    return checks.filter(c=>c.checked).map(c=>c.value);
+  }
+}
+
+function filterData(data,regions,budgets,activities,climates){
   return data.filter(item=>{
-    let regionMatch=!region||item.Region.split(",").map(i=>i.trim()).includes(region);
-    let budgetMatch=!budget||item.BudgetLevel.split(",").map(i=>i.trim()).includes(budget);
-    let climateMatch=!climate||item.Climate.split(",").map(i=>i.trim()).includes(climate);
-
-    let itemActivities=item.Activities.split(",").map(i=>i.trim());
-    let activitiesMatch=true;
-    if(activities.length>0){
-      activitiesMatch=activities.some(a=>itemActivities.includes(a));
-    }
-
-    return regionMatch&&budgetMatch&&activitiesMatch&&climateMatch;
+    // Empty arrays mean no filter or user didn't select any specific (treat as any)
+    let regionMatch=regions.length===0||item.Region.split(",").map(i=>i.trim()).some(r=>regions.includes(r));
+    let budgetMatch=budgets.length===0||item.BudgetLevel.split(",").map(i=>i.trim()).some(b=>budgets.includes(b));
+    let activityMatch=activities.length===0||item.Activities.split(",").map(i=>i.trim()).some(a=>activities.includes(a));
+    let climateMatch=climates.length===0||item.Climate.split(",").map(i=>i.trim()).some(c=>climates.includes(c));
+    return regionMatch&&budgetMatch&&activityMatch&&climateMatch;
   });
 }
 
 function showResults(){
-  const region=document.getElementById('regionFilter').value;
-  const budget=document.getElementById('budgetFilter').value;
-  const climate=document.getElementById('climateFilter').value;
-  const selectedActivities=[...document.querySelectorAll('.activity-item.selected')].map(a=>a.getAttribute('data-activity'));
+  const regions=getSelectedValues('regionList','regionAll');
+  const budgets=getSelectedValues('budgetList','budgetAll');
+  const activities=getSelectedValues('activitiesList','activitiesAll');
+  const climates=getSelectedValues('climateList','climateAll');
 
-  const filtered=filterData(allData,region,budget,selectedActivities,climate);
+  const filtered=filterData(allData,regions,budgets,activities,climates);
   const resultsSection=document.querySelector('.results-section');
   const cardStack=document.getElementById('cardStack');
   const actions=document.querySelector('.actions');
@@ -438,9 +554,17 @@ function showResults(){
     [filtered[i],filtered[j]]=[filtered[j],filtered[i]];
   }
 
+  // Store data on cards
   filtered.forEach((dest,i)=>{
     const card=document.createElement('div');
     card.classList.add('card');
+    card.dataset.destination=dest.Destination;
+    card.dataset.region=dest.Region;
+    card.dataset.budget=dest.BudgetLevel;
+    card.dataset.activities=dest.Activities;
+    card.dataset.climate=dest.Climate;
+    card.dataset.reflink=dest.Reflink;
+
     card.style.zIndex=filtered.length-i;
     card.innerHTML=`
       <h2>${dest.Destination}</h2>
@@ -500,15 +624,20 @@ function showResults(){
     const topCard=getTopCard();
     if(topCard) swipeCard(topCard,200);
   });
+  document.getElementById('undoBtn').addEventListener('click',()=>{
+    undoLastSwipe();
+  });
 }
 
 function endSwipe(card,currentX){
   if(currentX>100){
-    // Swiped right
+    // Swiped right (like)
+    storeCardForUndo(card);
     card.style.transform=`translate(1000px,-50%)`;
     setTimeout(()=>card.remove(),300);
   }else if(currentX<-100){
-    // Swiped left
+    // Swiped left (reject)
+    storeCardForUndo(card);
     card.style.transform=`translate(-1000px,-50%)`;
     setTimeout(()=>card.remove(),300);
   }else{
@@ -525,14 +654,93 @@ function getTopCard(){
 }
 
 function swipeCard(card,direction){
+  storeCardForUndo(card);
   card.style.transform=`translate(${direction>0?1000:-1000}px,-50%)`;
   setTimeout(()=>card.remove(),300);
 }
 
-// Init
-fetchData().then(data=>{
-  allData=data;
-});
+function storeCardForUndo(card){
+  // Store card details in a stack to restore later
+  const cardData={
+    Destination:card.dataset.destination,
+    Region:card.dataset.region,
+    BudgetLevel:card.dataset.budget,
+    Activities:card.dataset.activities,
+    Climate:card.dataset.climate,
+    Reflink:card.dataset.reflink
+  };
+  swipedStack.push(cardData);
+}
+
+function undoLastSwipe(){
+  if(swipedStack.length===0)return;
+  const lastCardData=swipedStack.pop();
+  const cardStack=document.getElementById('cardStack');
+  const newCard=document.createElement('div');
+  newCard.classList.add('card');
+  newCard.dataset.destination=lastCardData.Destination;
+  newCard.dataset.region=lastCardData.Region;
+  newCard.dataset.budget=lastCardData.BudgetLevel;
+  newCard.dataset.activities=lastCardData.Activities;
+  newCard.dataset.climate=lastCardData.Climate;
+  newCard.dataset.reflink=lastCardData.Reflink;
+
+  // Compute top zIndex
+  const cards=[...document.querySelectorAll('.card')];
+  let maxZ=0;
+  cards.forEach(c=>{
+    const z=parseInt(c.style.zIndex)||0;
+    if(z>maxZ)maxZ=z;
+  });
+
+  newCard.style.zIndex=maxZ+1;
+  newCard.innerHTML=`
+    <h2>${lastCardData.Destination}</h2>
+    <p><strong>Region:</strong> ${lastCardData.Region}<br>
+    <strong>Budget:</strong> ${lastCardData.BudgetLevel}<br>
+    <strong>Activities:</strong> ${lastCardData.Activities}<br>
+    <strong>Climate:</strong> ${lastCardData.Climate}</p>
+    <a href="${lastCardData.Reflink}" target="_blank">Book Now</a>
+  `;
+  cardStack.appendChild(newCard);
+
+  let startX=0,currentX=0;
+  let dragging=false;
+
+  newCard.addEventListener('touchstart',e=>{
+    dragging=true;
+    startX=e.touches[0].clientX;
+  });
+  newCard.addEventListener('touchmove',e=>{
+    if(!dragging)return;
+    currentX=e.touches[0].clientX-startX;
+    newCard.style.transform=`translate(${currentX}px,-50%) rotate(${currentX/20}deg)`;
+  });
+  newCard.addEventListener('touchend',()=>{
+    endSwipe(newCard,currentX);
+    dragging=false;
+  });
+
+  newCard.addEventListener('mousedown',e=>{
+    dragging=true;
+    startX=e.clientX;
+  });
+  newCard.addEventListener('mousemove',e=>{
+    if(!dragging)return;
+    currentX=e.clientX-startX;
+    newCard.style.transform=`translate(${currentX}px,-50%) rotate(${currentX/20}deg)`;
+  });
+  newCard.addEventListener('mouseup',()=>{
+    endSwipe(newCard,currentX);
+    dragging=false;
+  });
+  newCard.addEventListener('mouseleave',()=>{
+    if(dragging){
+      endSwipe(newCard,currentX);
+      dragging=false;
+    }
+  });
+}
 </script>
 </body>
 </html>
