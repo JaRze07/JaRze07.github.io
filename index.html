@@ -90,9 +90,8 @@ h1 {
   line-height:1.4;
   padding:15px 10px;
   margin:0;
-  background:transparent;
-  transition:background 0.3s;
   position:relative;
+  transition:background 0.3s;
 }
 .checkbox-item:hover {
   background:rgba(0,0,0,0.05);
@@ -139,17 +138,20 @@ h1 {
   content:"";
   position:absolute;
   top:0; left:0; right:0; bottom:0;
-  z-index:-1;
   pointer-events:none;
   background-image: url("data:image/svg+xml;utf8,<svg width='12' height='8' xmlns='http://www.w3.org/2000/svg'><path d='M0 8 L6 0 L12 8' fill='none' stroke='%23FF4081' stroke-width='2'/></svg>");
   background-repeat: repeat;
   background-size:12px 8px;
   opacity:0;
   border-radius:4px;
-  transition:opacity 0.2s;
+  z-index:0;
 }
 .checkbox-item.selected-item::before {
-  opacity:0.5; /* More visible */
+  opacity:1; /* Fully visible */
+}
+.checkbox-item * {
+  position:relative;
+  z-index:1; /* ensure text is above pattern */
 }
 
 /* Buttons */
@@ -270,29 +272,28 @@ button:hover {
   transition:background 0.2s;
 }
 
-/* Icons */
-.swipe-icon {
+/* Single feedback in the middle */
+.swipe-feedback {
   position:absolute;
-  top:50%;
-  transform:translateY(-50%);
-  font-size:60px;
-  opacity:0;
-  z-index:6;
+  top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
   pointer-events:none;
+  opacity:0;
   transition:opacity 0.2s, transform 0.2s;
+  z-index:6;
 }
-.swipe-icon svg {
-  width:60px;
-  height:60px;
-  fill:#fff;
+.swipe-feedback svg {
+  width:60px; height:60px; fill:#fff;
+  margin-bottom:8px;
 }
-/* On right swipe show heart on left */
-.swipe-icon.left {
-  left:20px;
-}
-/* On left swipe show X on right */
-.swipe-icon.right {
-  right:20px;
+.swipe-feedback .label {
+  font-size:24px;
+  color:#fff;
+  font-weight:600;
 }
 
 /* Buttons below cards */
@@ -356,6 +357,9 @@ button:hover {
   .card a {
     font-size:18px;
     padding:12px 20px;
+  }
+  .swipe-feedback .label {
+    font-size:20px;
   }
   .action-btn {
     width:50px;
@@ -682,20 +686,7 @@ function showResults(){
       <strong>Activities:</strong> ${dest.Activities}<br>
       <strong>Climate:</strong> ${dest.Climate}</p>
       <a href="${dest.Reflink}" target="_blank">Book Now</a>
-      <div class="swipe-icon left" style="display:none;">
-        <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 
-        15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 
-        3c1.74 0 3.41.81 4.5 2.09C13.09 
-        3.81 14.76 3 16.5 3 19.58 3 22 
-        5.42 22 8.5c0 3.78-3.4 6.86-8.55 
-        11.54L12 21.35z"/></svg>
-      </div>
-      <div class="swipe-icon right" style="display:none;">
-        <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 
-        10.59 6.41 5 5 6.41 10.59 12 5 17.59 
-        6.41 19 12 13.41 17.59 19 19 17.59 
-        13.41 12z"/></svg>
-      </div>
+      <div class="swipe-feedback"></div>
     `;
     cardStack.appendChild(card);
     initCard(card);
@@ -716,59 +707,77 @@ function showResults(){
 
 function initCard(card){
   let startX=0,currentX=0,dragging=false;
-  let moved=false; // to check if user actually moved >10px
+  let moved=false;
   const overlay=card.querySelector('.swipe-overlay');
-  const leftIcon=card.querySelector('.swipe-icon.left');
-  const rightIcon=card.querySelector('.swipe-icon.right');
+  const feedback=card.querySelector('.swipe-feedback');
+
+  function setFeedback(cx){
+    const percent = cx/(card.offsetWidth/2);
+    if(percent<0){
+      // Discard
+      feedback.innerHTML=`<svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 
+      10.59 6.41 5 5 6.41 10.59 12 5 17.59 
+      6.41 19 12 13.41 17.59 19 19 17.59 
+      13.41 12z"/></svg><div class="label">Discard</div>`;
+    } else if (percent>0) {
+      // Like
+      feedback.innerHTML=`<svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 
+      15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 
+      3c1.74 0 3.41.81 4.5 2.09C13.09 
+      3.81 14.76 3 16.5 3 19.58 3 22 
+      5.42 22 8.5c0 3.78-3.4 6.86-8.55 
+      11.54L12 21.35z"/></svg><div class="label">Like</div>`;
+    } else {
+      feedback.innerHTML="";
+    }
+
+    const absP=Math.min(Math.abs(percent),1);
+    if(absP>0){
+      feedback.style.opacity=absP;
+      feedback.style.transform=`translate(-50%,-50%) scale(${0.5+absP*0.5})`;
+    } else {
+      feedback.style.opacity=0;
+      feedback.style.transform=`translate(-50%,-50%)`;
+    }
+  }
 
   function updateSwipeVisual(cx){
     const percent = cx/(card.offsetWidth/2);
     const absP = Math.min(Math.abs(percent),1);
     if(percent < 0) {
       overlay.style.background=`rgba(255,82,82,${absP})`;
-      rightIcon.style.display='block';
-      rightIcon.style.opacity=absP;
-      rightIcon.style.transform=`translateY(-50%) scale(${0.5+absP*0.5})`;
-      leftIcon.style.display='none';
     } else if(percent > 0) {
       overlay.style.background=`rgba(76,175,80,${absP})`;
-      leftIcon.style.display='block';
-      leftIcon.style.opacity=absP;
-      leftIcon.style.transform=`translateY(-50%) scale(${0.5+absP*0.5})`;
-      rightIcon.style.display='none';
     } else {
       overlay.style.background='transparent';
-      leftIcon.style.display='none';
-      rightIcon.style.display='none';
     }
+    setFeedback(cx);
   }
 
   function endSwipe(cx){
     if(!moved){
-      // If user didn't move much, just reset position
       card.style.transform=`translate(-50%,-50%)`;
       overlay.style.background='transparent';
-      leftIcon.style.display='none';
-      rightIcon.style.display='none';
+      feedback.style.opacity=0;
+      feedback.style.transform=`translate(-50%,-50%)`;
       return;
     }
     if(cx>100){
       storeCardForUndo(card);
-      animateSwipeOut(card,cx,30); 
+      animateSwipeOut(card,cx,10); 
     }else if(cx<-100){
       storeCardForUndo(card);
-      animateSwipeOut(card,cx,-30); 
+      animateSwipeOut(card,cx,-10); 
     }else{
       card.style.transform=`translate(-50%,-50%)`;
       overlay.style.background='transparent';
-      leftIcon.style.display='none';
-      rightIcon.style.display='none';
+      feedback.style.opacity=0;
+      feedback.style.transform=`translate(-50%,-50%)`;
     }
     moved=false;
   }
 
   card.addEventListener('mousedown',e=>{
-    // start drag from anywhere
     startX=e.clientX;
     dragging=true;
     moved=false;
@@ -863,20 +872,7 @@ function undoLastSwipe(){
     <strong>Activities:</strong> ${lastCardData.Activities}<br>
     <strong>Climate:</strong> ${lastCardData.Climate}</p>
     <a href="${lastCardData.Reflink}" target="_blank">Book Now</a>
-    <div class="swipe-icon left" style="display:none;">
-      <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 
-      15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 
-      3c1.74 0 3.41.81 4.5 2.09C13.09 
-      3.81 14.76 3 16.5 3 19.58 3 22 
-      5.42 22 8.5c0 3.78-3.4 6.86-8.55 
-      11.54L12 21.35z"/></svg>
-    </div>
-    <div class="swipe-icon right" style="display:none;">
-      <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 
-      10.59 6.41 5 5 6.41 10.59 12 5 17.59 
-      6.41 19 12 13.41 17.59 19 19 17.59 
-      13.41 12z"/></svg>
-    </div>
+    <div class="swipe-feedback"></div>
   `;
   cardStack.appendChild(newCard);
   initCard(newCard);
@@ -891,33 +887,54 @@ function getTopCard(){
 }
 
 function buttonSwipe(card,direction){
-  // direction: -1 for left(X), 1 for right(heart)
+  // direction: -1 for discard (X), 1 for like (heart)
   storeCardForUndo(card);
-  animateSwipeOut(card,0,direction*30);
+  animateSwipeOut(card,0,direction*10);
 }
 
 function animateSwipeOut(card,startX,step){
   let currentX=startX;
   const overlay=card.querySelector('.swipe-overlay');
-  const leftIcon=card.querySelector('.swipe-icon.left');
-  const rightIcon=card.querySelector('.swipe-icon.right');
+  const feedback=card.querySelector('.swipe-feedback');
+
+  function setFeedback(cx){
+    const percent = cx/(card.offsetWidth/2);
+    if(percent<0){
+      feedback.innerHTML=`<svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 
+      10.59 6.41 5 5 6.41 10.59 12 5 17.59 
+      6.41 19 12 13.41 17.59 19 19 17.59 
+      13.41 12z"/></svg><div class="label">Discard</div>`;
+    } else if (percent>0) {
+      feedback.innerHTML=`<svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 
+      15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 
+      3c1.74 0 3.41.81 4.5 2.09C13.09 
+      3.81 14.76 3 16.5 3 19.58 3 22 
+      5.42 22 8.5c0 3.78-3.4 6.86-8.55 
+      11.54L12 21.35z"/></svg><div class="label">Like</div>`;
+    } else {
+      feedback.innerHTML="";
+    }
+    const absP=Math.min(Math.abs(percent),1);
+    if(absP>0){
+      feedback.style.opacity=absP;
+      feedback.style.transform=`translate(-50%,-50%) scale(${0.5+absP*0.5})`;
+    } else {
+      feedback.style.opacity=0;
+      feedback.style.transform=`translate(-50%,-50%)`;
+    }
+  }
 
   function updateSwipeVisual(cx){
     const percent = cx/(card.offsetWidth/2);
     const absP = Math.min(Math.abs(percent),1);
     if(percent < 0) {
       overlay.style.background=`rgba(255,82,82,${absP})`;
-      rightIcon.style.display='block';
-      rightIcon.style.opacity=absP;
-      rightIcon.style.transform=`translateY(-50%) scale(${0.5+absP*0.5})`;
-      leftIcon.style.display='none';
     } else if(percent > 0) {
       overlay.style.background=`rgba(76,175,80,${absP})`;
-      leftIcon.style.display='block';
-      leftIcon.style.opacity=absP;
-      leftIcon.style.transform=`translateY(-50%) scale(${0.5+absP*0.5})`;
-      rightIcon.style.display='none';
+    } else {
+      overlay.style.background='transparent';
     }
+    setFeedback(cx);
   }
 
   function animate(){
