@@ -1,0 +1,368 @@
+body {
+    margin:0;
+    padding:0;
+    background: linear-gradient(135deg, #FFDEE9, #B5FFFC);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+    min-height:100vh;
+    box-sizing:border-box;
+    font-family:"Shantell Sans", cursive;
+    font-weight:400;
+  }
+  
+  *, *:before, *:after {
+    box-sizing:inherit;
+  }
+  
+  h1 {
+    margin:0;
+    font-size:48px;
+    color:#333;
+    text-shadow:0 1px 3px rgba(0,0,0,0.1);
+    font-weight:600;
+    margin-top:40px;
+  }
+  
+  .semibold {
+    font-weight:600;
+  }
+  
+  .regular {
+    font-weight:400;
+  }
+  
+  /* Wizard */
+  .wizard {
+    background:rgba(255,255,255,0.95);
+    width:90%;
+    max-width:500px;
+    margin:60px 0 40px;
+    padding:30px;
+    border-radius:20px;
+    box-shadow:0 5px 20px rgba(0,0,0,0.1);
+    display:flex;
+    flex-direction:column;
+    position:relative;
+  }
+  
+  .wizard-step {
+    display:none;
+    flex-direction:column;
+    font-size:20px;
+  }
+  
+  .wizard-step.active {
+    display:flex;
+  }
+  
+  .wizard-step > label {
+    font-size:24px;
+    color:#444;
+  }
+  
+  /* Checkboxes */
+  .checkbox-list {
+    display:flex;
+    flex-direction:column;
+    background:transparent;
+  }
+  
+  .checkbox-item {
+    display:flex;
+    align-items:center;
+    cursor:pointer;
+    font-size:22px;
+    font-weight:400;
+    color:#333;
+    line-height:1.4;
+    padding:15px 10px;
+    margin:0;
+    background:transparent;
+    transition:background 0.3s;
+  }
+  
+  .checkbox-item:hover {
+    background:rgba(0,0,0,0.05);
+  }
+  
+  .checkbox-item input[type="checkbox"] {
+    position:absolute;
+    opacity:0;
+    cursor:pointer;
+    height:0;
+    width:0;
+  }
+  
+  .custom-check {
+    display:inline-block;
+    width:24px;
+    height:24px;
+    border:2px solid #FF4081;
+    border-radius:4px;
+    margin-right:10px;
+    flex-shrink:0;
+    position:relative;
+  }
+  
+  .custom-check:after {
+    content:'';
+    position:absolute;
+    width:8px;
+    height:16px;
+    border:2px solid #FF4081;
+    border-top:none;
+    border-left:none;
+    transform:rotate(45deg);
+    top:-1px;left:7px;
+    opacity:0;
+    transition:opacity 0.2s;
+  }
+  
+  .checkbox-item input[type="checkbox"]:checked ~ .custom-check:after {
+    opacity:1;
+  }
+  
+  .checkbox-label {
+    user-select:none;
+  }
+  
+  /* Buttons */
+  .button-group {
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    margin-top:20px;
+  }
+  
+  button {
+    flex:1;
+    padding:14px 25px;
+    border:none;
+    border-radius:10px;
+    font-size:24px;
+    cursor:pointer;
+    background:#FF4081;
+    color:#fff;
+    transition:background 0.3s;
+    font-weight:600;
+    text-align:center;
+  }
+  
+  button:hover {
+    background:#E2336D;
+  }
+  
+  .prev-btn {
+    background:#B0BEC5;
+    color:#fff;
+  }
+  
+  .prev-btn:hover {
+    background:#9CA9AE;
+  }
+  
+  /* Results */
+  .results-section {
+    width:90%;
+    max-width:500px;
+    position:relative;
+    height:600px;
+    display:none;
+    flex-direction:column;
+    align-items:center;
+    margin-bottom:50px;
+    padding:0 10px;
+    /* Removed overflow:hidden; so cards won't vanish behind a wall */
+  }
+  
+  .swipe-hint {
+    text-align:center;
+    margin-bottom:20px;
+    color:#333;
+    font-size:28px;
+    font-weight:600;
+    text-shadow:0 1px 2px rgba(255,255,255,0.7);
+  }
+  
+  .card-stack {
+    position:relative;
+    width:100%;
+    height:100%;
+  }
+  
+  /* Card */
+  .card {
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    width:95%;
+    background:#fff;
+    border-radius:20px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.1);
+    padding:30px 20px;
+    text-align:center;
+    user-select:none;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    max-height:80%;
+    overflow:hidden;
+    font-weight:600;
+  }
+  
+  .card h2 {
+    margin:0 0 20px;
+    font-size:28px;
+    color:#333;
+    font-weight:600;
+  }
+  
+  .card p {
+    margin:0;
+    font-size:22px;
+    line-height:1.6;
+    color:#555;
+    margin-bottom:20px;
+    font-weight:600;
+  }
+  
+  .card a {
+    display:inline-block;
+    margin-top:10px;
+    background:#4CAF50;
+    color:#fff;
+    padding:14px 25px;
+    text-decoration:none;
+    border-radius:8px;
+    font-size:22px;
+    font-weight:600;
+  }
+  
+  .card a:hover {
+    background:#43a047;
+  }
+  
+  .card .swipe-overlay {
+    position:absolute;
+    top:0; left:0; right:0; bottom:0;
+    background:transparent;
+    z-index:5;
+    pointer-events:none;
+    transition:background 0.2s;
+  }
+  
+  /* Icons */
+  .swipe-icon {
+    position:absolute;
+    top:50%;
+    transform:translateY(-50%);
+    font-size:60px;
+    opacity:0;
+    z-index:6;
+    pointer-events:none;
+    transition:opacity 0.2s, transform 0.2s;
+  }
+  
+  .swipe-icon svg {
+    width:60px;
+    height:60px;
+    fill:#fff;
+  }
+  
+  /* On right swipe show heart on left */
+  .swipe-icon.left {
+    left:20px;
+  }
+  
+  /* On left swipe show X on right */
+  .swipe-icon.right {
+    right:20px;
+  }
+  
+  /* Buttons below cards */
+  .actions {
+    position:absolute;
+    bottom:20px;
+    width:100%;
+    display:flex;
+    justify-content:center;
+    gap:40px;
+    z-index:999;
+    display:none;
+  }
+  
+  .action-btn {
+    width:60px;
+    height:60px;
+    background:#fff;
+    border-radius:50%;
+    box-shadow:0 2px 10px rgba(0,0,0,0.2);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    transition:transform 0.2s;
+  }
+  
+  .action-btn:hover {
+    transform:scale(1.1);
+  }
+  
+  .action-btn:active {
+    transform:scale(0.95);
+  }
+  
+  .action-btn.reject {
+    background:#FF5252;
+  }
+  
+  .action-btn.like {
+    background:#4CAF50;
+  }
+  
+  .action-btn.undo {
+    background:#FFC107;
+  }
+  
+  .action-btn svg {
+    width:30px;height:30px;
+    fill:#fff;
+  }
+  
+  @media (max-width:600px) {
+    .wizard {
+      margin-top:40px;
+      padding:20px;
+    }
+  
+    .card {
+      padding:20px;
+    }
+  
+    .card h2 {
+      font-size:24px;
+    }
+  
+    .card p {
+      font-size:20px;
+    }
+  
+    .card a {
+      font-size:18px;
+      padding:12px 20px;
+    }
+  
+    .action-btn {
+      width:50px;
+      height:50px;
+    }
+  
+    .action-btn svg {
+      width:24px;
+      height:24px;
+    }
+  }
+  
