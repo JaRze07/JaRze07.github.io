@@ -7,60 +7,67 @@
 <style>
 body{
   font-family:'Helvetica Neue',Arial,sans-serif;
-  background:linear-gradient(135deg, #FF8A65, #FFB74D);
+  background: linear-gradient(135deg, #90A4AE, #CFD8DC);
   margin:0;padding:0;
   display:flex;flex-direction:column;
   align-items:center;
   justify-content:flex-start;
   min-height:100vh;
+  color:#333;
 }
+
 header{
   width:100%;
-  background:rgba(255,255,255,0.2);
-  color:#fff;
-  padding:20px;
   text-align:center;
-  box-shadow:0 2px 5px rgba(0,0,0,0.2);
-  backdrop-filter:blur(5px);
+  padding:30px 0;
 }
-h1{
+header h1{
   margin:0;
-  font-size:24px;
+  font-size:28px;
+  color:#fff;
+  text-shadow:0 2px 5px rgba(0,0,0,0.3);
 }
+
 .wizard{
-  background:#fff;
+  background:rgba(255,255,255,0.9);
   max-width:400px;
   width:90%;
-  margin-top:20px;
-  padding:20px;
-  border-radius:10px;
-  box-shadow:0 2px 10px rgba(0,0,0,0.1);
+  margin-top:40px;
+  padding:30px;
+  border-radius:15px;
+  box-shadow:0 5px 20px rgba(0,0,0,0.2);
   display:flex;
   flex-direction:column;
-  gap:20px;
-  transition:all 0.3s ease;
+  gap:25px;
   position:relative;
 }
+
 .wizard-step{
   display:none;
   flex-direction:column;
-  gap:10px;
+  gap:15px;
 }
 .wizard-step.active{
   display:flex;
 }
+
 label{
   font-weight:bold;
-  font-size:14px;
+  font-size:16px;
+  margin-bottom:5px;
+  color:#444;
 }
+
 select, .activities-container{
   width:100%;
-  padding:10px;
+  padding:12px;
   border:1px solid #ccc;
-  border-radius:5px;
+  border-radius:8px;
   background:#fff;
-  font-size:14px;
+  font-size:16px;
+  color:#333;
 }
+
 .activities-container{
   display:flex;
   flex-wrap:wrap;
@@ -69,46 +76,63 @@ select, .activities-container{
 .activity-item{
   background:#eee;
   border-radius:20px;
-  padding:5px 10px;
+  padding:8px 15px;
   cursor:pointer;
   user-select:none;
   transition:background 0.3s,color 0.3s;
+  font-size:14px;
+  color:#555;
 }
 .activity-item.selected{
-  background:#FF8A65;
+  background:#8D6E63;
   color:#fff;
 }
+
 button{
-  padding:10px 20px;
+  padding:12px 25px;
   border:none;
-  border-radius:5px;
+  border-radius:10px;
   font-size:16px;
   cursor:pointer;
-  background:#FF8A65;
+  background:#8D6E63;
   color:#fff;
   transition:background 0.3s;
   margin-top:10px;
   align-self:center;
+  font-weight:bold;
 }
 button:hover{
-  background:#ff7a53;
+  background:#7C5B52;
 }
+.prev-btn{
+  background:#B0BEC5;
+}
+.prev-btn:hover{
+  background:#9CA9AE;
+}
+
 .results-section{
   width:100%;
   max-width:400px;
-  margin-top:20px;
+  margin-top:40px;
   position:relative;
-  height:500px;
+  height:600px;
   overflow:hidden;
   display:none;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
 }
+
 .card-stack{
   position:absolute;
-  top:0;left:50%;
-  transform:translateX(-50%);
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
   width:100%;
   height:100%;
 }
+
 .card{
   position:absolute;
   top:50%;
@@ -118,7 +142,7 @@ button:hover{
   background:#fff;
   border-radius:20px;
   box-shadow:0 5px 20px rgba(0,0,0,0.2);
-  padding:20px;
+  padding:30px 20px;
   text-align:center;
   transition:transform 0.3s;
   user-select:none;
@@ -128,23 +152,26 @@ button:hover{
   justify-content:space-between;
 }
 .card h2{
-  margin:0 0 10px;
-  font-size:22px;
+  margin:0 0 15px;
+  font-size:24px;
+  color:#333;
 }
 .card p{
   margin:0;
-  font-size:14px;
+  font-size:16px;
   line-height:1.4;
+  color:#555;
 }
 .card a{
   display:inline-block;
-  margin-top:10px;
+  margin-top:20px;
   background:#4CAF50;
   color:#fff;
-  padding:10px 20px;
+  padding:12px 25px;
   text-decoration:none;
-  border-radius:5px;
-  font-size:14px;
+  border-radius:8px;
+  font-size:16px;
+  font-weight:bold;
 }
 .card a:hover{
   background:#43a047;
@@ -152,9 +179,9 @@ button:hover{
 
 .swipe-hint{
   text-align:center;
-  margin:20px 0;
+  margin-bottom:20px;
   color:#fff;
-  font-size:16px;
+  font-size:18px;
   font-weight:bold;
   text-shadow:0 1px 2px rgba(0,0,0,0.5);
 }
@@ -167,33 +194,52 @@ button:hover{
   display:flex;
   justify-content:space-between;
   pointer-events:none;
+  z-index:999; /* Ensure arrows are on top */
 }
 .arrow-btn{
   pointer-events:auto;
-  background:rgba(255,255,255,0.7);
-  width:40px;height:40px;
+  background:rgba(255,255,255,0.8);
+  width:50px;height:50px;
   display:flex;align-items:center;justify-content:center;
   border-radius:50%;
   box-shadow:0 2px 5px rgba(0,0,0,0.3);
   cursor:pointer;
-  margin:0 10px;
+  margin:0 20px;
   transition:background 0.3s;
 }
 .arrow-btn:hover{
-  background:rgba(255,255,255,0.9);
+  background:rgba(255,255,255,1);
 }
 .arrow-btn:active{
   transform:scale(0.95);
 }
-.arrow-btn.left{
-  margin-left:15px;
-}
-.arrow-btn.right{
-  margin-right:15px;
-}
 .arrow-btn svg{
-  width:20px;height:20px;
-  fill:#FF8A65;
+  width:24px;height:24px;
+  fill:#8D6E63;
+}
+
+@media (max-width:500px){
+  .card{
+    padding:20px;
+  }
+  .card h2{
+    font-size:20px;
+  }
+  .card p{
+    font-size:14px;
+  }
+  .card a{
+    font-size:14px;
+    padding:10px 15px;
+  }
+  .arrow-btn{
+    width:40px;
+    height:40px;
+  }
+  .arrow-btn svg{
+    width:20px;
+    height:20px;
+  }
 }
 </style>
 </head>
@@ -223,8 +269,10 @@ button:hover{
       <option value="Mid-range">Mid-range</option>
       <option value="Luxury">Luxury</option>
     </select>
-    <button class="prev-btn">Back</button>
-    <button class="next-btn">Next</button>
+    <div style="display:flex;justify-content:space-between">
+      <button class="prev-btn">Back</button>
+      <button class="next-btn">Next</button>
+    </div>
   </div>
   <div class="wizard-step step-3">
     <label>Select Activities (multi-select):</label>
@@ -235,8 +283,10 @@ button:hover{
       <div class="activity-item" data-activity="Culture">Culture</div>
       <div class="activity-item" data-activity="Shopping">Shopping</div>
     </div>
-    <button class="prev-btn">Back</button>
-    <button class="next-btn">Next</button>
+    <div style="display:flex;justify-content:space-between">
+      <button class="prev-btn">Back</button>
+      <button class="next-btn">Next</button>
+    </div>
   </div>
   <div class="wizard-step step-4">
     <label for="climateFilter">Climate:</label>
@@ -246,8 +296,10 @@ button:hover{
       <option value="Cold">Cold</option>
       <option value="Temperate">Temperate</option>
     </select>
-    <button class="prev-btn">Back</button>
-    <button class="finish-btn">Find Destinations</button>
+    <div style="display:flex;justify-content:space-between">
+      <button class="prev-btn">Back</button>
+      <button class="finish-btn">Find Destinations</button>
+    </div>
   </div>
 </div>
 
@@ -347,7 +399,7 @@ function showResults(){
     alert("No matching destinations found!");
     return;
   }
-  resultsSection.style.display='block';
+  resultsSection.style.display='flex';
 
   for(let i=filtered.length-1;i>0;i--){
     const j=Math.floor(Math.random()*(i+1));
