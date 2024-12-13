@@ -3,39 +3,41 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Playful Travel Recommender</title>
+<title>Youthful Travel Recommender</title>
 <style>
 body{
-  font-family:'Helvetica Neue',Arial,sans-serif;
-  background: linear-gradient(135deg, #90A4AE, #CFD8DC);
   margin:0;padding:0;
+  font-family:'Helvetica Neue',Arial,sans-serif;
+  background: linear-gradient(135deg, #FFDEE9, #B5FFFC);
   display:flex;flex-direction:column;
-  align-items:center;
-  justify-content:flex-start;
+  align-items:center;justify-content:flex-start;
   min-height:100vh;
   color:#333;
 }
 
+/* Header */
 header{
   width:100%;
   text-align:center;
-  padding:30px 0;
+  padding:40px 0 0;
 }
 header h1{
   margin:0;
-  font-size:28px;
-  color:#fff;
-  text-shadow:0 2px 5px rgba(0,0,0,0.3);
+  font-size:30px;
+  color:#333;
+  text-shadow:0 1px 3px rgba(0,0,0,0.1);
+  font-weight:bold;
 }
 
+/* Wizard Container */
 .wizard{
-  background:rgba(255,255,255,0.9);
-  max-width:400px;
+  background:rgba(255,255,255,0.95);
   width:90%;
-  margin-top:40px;
+  max-width:500px;
+  margin:100px 0 40px; /* moved down */
   padding:30px;
-  border-radius:15px;
-  box-shadow:0 5px 20px rgba(0,0,0,0.2);
+  border-radius:20px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.1);
   display:flex;
   flex-direction:column;
   gap:25px;
@@ -45,7 +47,7 @@ header h1{
 .wizard-step{
   display:none;
   flex-direction:column;
-  gap:15px;
+  gap:20px;
 }
 .wizard-step.active{
   display:flex;
@@ -53,7 +55,7 @@ header h1{
 
 label{
   font-weight:bold;
-  font-size:16px;
+  font-size:18px;
   margin-bottom:5px;
   color:#444;
 }
@@ -84,87 +86,102 @@ select, .activities-container{
   color:#555;
 }
 .activity-item.selected{
-  background:#8D6E63;
+  background:#FF4081;
   color:#fff;
 }
 
+.button-group{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+}
+
 button{
+  flex:1;
   padding:12px 25px;
   border:none;
   border-radius:10px;
   font-size:16px;
   cursor:pointer;
-  background:#8D6E63;
+  background:#FF4081;
   color:#fff;
   transition:background 0.3s;
-  margin-top:10px;
-  align-self:center;
   font-weight:bold;
+  text-align:center;
 }
 button:hover{
-  background:#7C5B52;
+  background:#E2336D;
 }
 .prev-btn{
   background:#B0BEC5;
+  color:#fff;
 }
 .prev-btn:hover{
   background:#9CA9AE;
 }
 
+/* Results Section */
 .results-section{
-  width:100%;
-  max-width:400px;
-  margin-top:40px;
+  width:90%;
+  max-width:500px;
   position:relative;
   height:600px;
   overflow:hidden;
   display:none;
-  display:flex;
   flex-direction:column;
   align-items:center;
+  margin-bottom:50px;
+}
+
+.swipe-hint{
+  text-align:center;
+  margin-bottom:20px;
+  color:#333;
+  font-size:18px;
+  font-weight:bold;
+  text-shadow:0 1px 2px rgba(255,255,255,0.7);
 }
 
 .card-stack{
-  position:absolute;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%);
+  position:relative;
   width:100%;
   height:100%;
 }
 
+/* Card Style */
 .card{
   position:absolute;
   top:50%;
   left:50%;
   transform:translate(-50%,-50%);
-  width:90%;
+  width:100%;
+  max-width:100%;
   background:#fff;
   border-radius:20px;
-  box-shadow:0 5px 20px rgba(0,0,0,0.2);
+  box-shadow:0 10px 30px rgba(0,0,0,0.1);
   padding:30px 20px;
   text-align:center;
   transition:transform 0.3s;
   user-select:none;
-  max-height:80%;
   display:flex;
   flex-direction:column;
-  justify-content:space-between;
+  justify-content:center;
 }
 .card h2{
-  margin:0 0 15px;
+  margin:0 0 20px;
   font-size:24px;
   color:#333;
+  font-weight:bold;
 }
 .card p{
   margin:0;
   font-size:16px;
-  line-height:1.4;
+  line-height:1.6;
   color:#555;
 }
 .card a{
   display:inline-block;
-  margin-top:20px;
+  margin-top:25px;
   background:#4CAF50;
   color:#fff;
   padding:12px 25px;
@@ -177,48 +194,53 @@ button:hover{
   background:#43a047;
 }
 
-.swipe-hint{
-  text-align:center;
-  margin-bottom:20px;
-  color:#fff;
-  font-size:18px;
-  font-weight:bold;
-  text-shadow:0 1px 2px rgba(0,0,0,0.5);
-}
-
-.arrows{
+/* Swipe Buttons (Tinder-style) */
+.actions{
   position:absolute;
-  top:50%;
-  transform:translateY(-50%);
+  bottom:20px;
   width:100%;
   display:flex;
-  justify-content:space-between;
-  pointer-events:none;
-  z-index:999; /* Ensure arrows are on top */
-}
-.arrow-btn{
-  pointer-events:auto;
-  background:rgba(255,255,255,0.8);
-  width:50px;height:50px;
-  display:flex;align-items:center;justify-content:center;
-  border-radius:50%;
-  box-shadow:0 2px 5px rgba(0,0,0,0.3);
-  cursor:pointer;
-  margin:0 20px;
-  transition:background 0.3s;
-}
-.arrow-btn:hover{
-  background:rgba(255,255,255,1);
-}
-.arrow-btn:active{
-  transform:scale(0.95);
-}
-.arrow-btn svg{
-  width:24px;height:24px;
-  fill:#8D6E63;
+  justify-content:center;
+  gap:40px;
+  z-index:999;
+  display:none;
 }
 
-@media (max-width:500px){
+.action-btn{
+  width:60px;
+  height:60px;
+  background:#fff;
+  border-radius:50%;
+  box-shadow:0 2px 10px rgba(0,0,0,0.2);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  transition:transform 0.2s;
+}
+.action-btn:hover{
+  transform:scale(1.1);
+}
+.action-btn:active{
+  transform:scale(0.95);
+}
+.action-btn.reject{
+  background:#FF5252;
+}
+.action-btn.like{
+  background:#4CAF50;
+}
+.action-btn svg{
+  width:30px;height:30px;
+  fill:#fff;
+}
+
+/* Responsive Adjustments */
+@media (max-width:600px){
+  .wizard{
+    margin-top:60px;
+    padding:20px;
+  }
   .card{
     padding:20px;
   }
@@ -232,13 +254,12 @@ button:hover{
     font-size:14px;
     padding:10px 15px;
   }
-  .arrow-btn{
-    width:40px;
-    height:40px;
+  .action-btn{
+    width:50px;
+    height:50px;
   }
-  .arrow-btn svg{
-    width:20px;
-    height:20px;
+  .action-btn svg{
+    width:24px;height:24px;
   }
 }
 </style>
@@ -259,7 +280,9 @@ button:hover{
       <option value="Oceania">Oceania</option>
       <option value="Africa">Africa</option>
     </select>
-    <button class="next-btn">Next</button>
+    <div class="button-group">
+      <button class="next-btn">Next</button>
+    </div>
   </div>
   <div class="wizard-step step-2">
     <label for="budgetFilter">Budget Level:</label>
@@ -269,7 +292,7 @@ button:hover{
       <option value="Mid-range">Mid-range</option>
       <option value="Luxury">Luxury</option>
     </select>
-    <div style="display:flex;justify-content:space-between">
+    <div class="button-group">
       <button class="prev-btn">Back</button>
       <button class="next-btn">Next</button>
     </div>
@@ -283,7 +306,7 @@ button:hover{
       <div class="activity-item" data-activity="Culture">Culture</div>
       <div class="activity-item" data-activity="Shopping">Shopping</div>
     </div>
-    <div style="display:flex;justify-content:space-between">
+    <div class="button-group">
       <button class="prev-btn">Back</button>
       <button class="next-btn">Next</button>
     </div>
@@ -296,7 +319,7 @@ button:hover{
       <option value="Cold">Cold</option>
       <option value="Temperate">Temperate</option>
     </select>
-    <div style="display:flex;justify-content:space-between">
+    <div class="button-group">
       <button class="prev-btn">Back</button>
       <button class="finish-btn">Find Destinations</button>
     </div>
@@ -304,20 +327,26 @@ button:hover{
 </div>
 
 <div class="results-section">
-  <div class="swipe-hint">Drag cards or use arrows to swipe</div>
-  <div class="arrows">
-    <div class="arrow-btn left" id="leftBtn">
-      <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+  <div class="swipe-hint">Drag cards or tap buttons below</div>
+  <div class="card-stack" id="cardStack"></div>
+  <div class="actions">
+    <div class="action-btn reject" id="rejectBtn">
+      <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 
+      17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
     </div>
-    <div class="arrow-btn right" id="rightBtn">
-      <svg viewBox="0 0 24 24"><path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/></svg>
+    <div class="action-btn like" id="likeBtn">
+      <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 
+      15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 
+      3c1.74 0 3.41.81 4.5 2.09C13.09 
+      3.81 14.76 3 16.5 3 19.58 3 22 
+      5.42 22 8.5c0 3.78-3.4 6.86-8.55 
+      11.54L12 21.35z"/></svg>
     </div>
   </div>
-  <div class="card-stack" id="cardStack"></div>
 </div>
 
 <script>
-const GSheetURL="https://docs.google.com/spreadsheets/d/e/2PACX-1vQbq36KXieC6aKe3KfwM7162IGCZE-WAKHJ7xyScSLrvs92G64vp4BkFaAn0ikrObiBY0jZUYX1Ugpz/pub?gid=0&single=true&output=csv";
+const GSheetURL="YOUR_GOOGLE_SHEET_CSV_LINK_HERE";
 
 let allData=[];
 const steps=document.querySelectorAll('.wizard-step');
@@ -394,13 +423,16 @@ function showResults(){
   const filtered=filterData(allData,region,budget,selectedActivities,climate);
   const resultsSection=document.querySelector('.results-section');
   const cardStack=document.getElementById('cardStack');
+  const actions=document.querySelector('.actions');
   cardStack.innerHTML='';
   if(filtered.length===0){
     alert("No matching destinations found!");
     return;
   }
   resultsSection.style.display='flex';
+  actions.style.display='flex';
 
+  // Shuffle
   for(let i=filtered.length-1;i>0;i--){
     const j=Math.floor(Math.random()*(i+1));
     [filtered[i],filtered[j]]=[filtered[j],filtered[i]];
@@ -423,7 +455,7 @@ function showResults(){
     let startX=0,currentX=0;
     let dragging=false;
 
-    // Touch events
+    // Touch
     card.addEventListener('touchstart',e=>{
       dragging=true;
       startX=e.touches[0].clientX;
@@ -438,7 +470,7 @@ function showResults(){
       dragging=false;
     });
 
-    // Mouse events for PC
+    // Mouse
     card.addEventListener('mousedown',e=>{
       dragging=true;
       startX=e.clientX;
@@ -460,13 +492,11 @@ function showResults(){
     });
   });
 
-  const leftBtn=document.getElementById('leftBtn');
-  const rightBtn=document.getElementById('rightBtn');
-  leftBtn.addEventListener('click',()=>{
+  document.getElementById('rejectBtn').addEventListener('click',()=>{
     const topCard=getTopCard();
     if(topCard) swipeCard(topCard,-200);
   });
-  rightBtn.addEventListener('click',()=>{
+  document.getElementById('likeBtn').addEventListener('click',()=>{
     const topCard=getTopCard();
     if(topCard) swipeCard(topCard,200);
   });
@@ -474,9 +504,11 @@ function showResults(){
 
 function endSwipe(card,currentX){
   if(currentX>100){
+    // Swiped right
     card.style.transform=`translate(1000px,-50%)`;
     setTimeout(()=>card.remove(),300);
   }else if(currentX<-100){
+    // Swiped left
     card.style.transform=`translate(-1000px,-50%)`;
     setTimeout(()=>card.remove(),300);
   }else{
