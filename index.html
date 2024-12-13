@@ -12,7 +12,7 @@
 body {
   margin:0;
   padding:0;
-  font-family: sans-serif;
+  font-family: "Bangers", system-ui, sans-serif; /* Using Bangers for all text */
   background: linear-gradient(135deg, #FFDEE9, #B5FFFC);
   display:flex;
   flex-direction:column;
@@ -27,12 +27,6 @@ body {
   box-sizing:inherit;
 }
 
-.bangers-regular {
-  font-family: "Bangers", system-ui;
-  font-weight:400;
-  font-style:normal;
-}
-
 header {
   width:100%;
   text-align:center;
@@ -40,13 +34,10 @@ header {
 }
 header h1 {
   margin:0;
-  font-size:38px;
+  font-size:48px;
   color:#333;
   text-shadow:0 1px 3px rgba(0,0,0,0.1);
-  font-weight:700;
-}
-header h1.bangers-regular {
-  font-size:48px;
+  font-weight:400; /* Using normal weight for Bangers is still quite bold */
 }
 
 /* Wizard Container */
@@ -72,36 +63,31 @@ header h1.bangers-regular {
 }
 
 label {
-  font-weight:bold;
   font-size:24px;
-  margin-bottom:10px;
+  margin-bottom:20px;
   color:#444;
+  font-weight:400; /* Not bold, to make it lighter */
 }
 
 /* Checkbox List Styles */
 .checkbox-list {
   display:flex;
   flex-direction:column;
-  border:1px solid #ccc;
-  border-radius:8px;
+  /* no borders or lines */
 }
 .checkbox-item {
-  display:block;
-  position:relative;
+  display:flex;
+  align-items:center;
   cursor:pointer;
-  font-size:20px;
-  font-weight:500;
+  font-size:22px;
+  font-weight:400;
   color:#333;
   line-height:1.4;
   padding:15px 10px;
   transition:background 0.3s;
-  border-bottom:1px solid #ccc;
 }
 .checkbox-item:hover {
   background:rgba(0,0,0,0.05);
-}
-.checkbox-item:last-child {
-  border-bottom:none;
 }
 .checkbox-item input[type="checkbox"] {
   position:absolute;
@@ -114,18 +100,13 @@ label {
   display:inline-block;
   width:24px;
   height:24px;
-  border:2px solid #aaa;
+  border:2px solid #FF4081;
   border-radius:4px;
   margin-right:10px;
   vertical-align:middle;
   background:#fff;
-  transition:border-color 0.3s, background 0.3s;
-  box-sizing:border-box;
   position:relative;
-}
-.checkbox-item input[type="checkbox"]:checked ~ .custom-check {
-  background:#fff;
-  border-color:#FF4081;
+  flex-shrink:0;
 }
 .checkbox-item .custom-check:after {
   content:'';
@@ -134,9 +115,9 @@ label {
   height:16px;
   border:2px solid #FF4081;
   border-top:none;
-  border-right:none;
-  transform:rotate(-45deg);
-  top:1px;left:7px;
+  border-left:none;
+  transform:rotate(45deg); /* Normal tick orientation */
+  top:1px;left:8px;
   opacity:0;
   transition:opacity 0.2s;
 }
@@ -146,6 +127,7 @@ label {
 .checkbox-item .checkbox-label {
   vertical-align:middle;
   display:inline-block;
+  user-select:none;
 }
 
 /* Button Group */
@@ -160,12 +142,12 @@ button {
   padding:14px 25px;
   border:none;
   border-radius:10px;
-  font-size:20px;
+  font-size:24px;
   cursor:pointer;
   background:#FF4081;
   color:#fff;
   transition:background 0.3s;
-  font-weight:bold;
+  font-weight:400;
   text-align:center;
 }
 button:hover {
@@ -197,8 +179,8 @@ button:hover {
   text-align:center;
   margin-bottom:20px;
   color:#333;
-  font-size:22px;
-  font-weight:bold;
+  font-size:28px;
+  font-weight:400;
   text-shadow:0 1px 2px rgba(255,255,255,0.7);
 }
 
@@ -220,25 +202,23 @@ button:hover {
   box-shadow:0 4px 15px rgba(0,0,0,0.1);
   padding:30px 20px;
   text-align:center;
-  transition:transform 0.3s, background-color 0.3s;
   user-select:none;
   display:flex;
   flex-direction:column;
   justify-content:center;
   max-height:80%;
   overflow:hidden;
-  position:relative;
 }
 
 .card h2 {
   margin:0 0 20px;
   font-size:28px;
   color:#333;
-  font-weight:600;
+  font-weight:400;
 }
 .card p {
   margin:0;
-  font-size:20px;
+  font-size:22px;
   line-height:1.6;
   color:#555;
   margin-bottom:20px;
@@ -251,31 +231,32 @@ button:hover {
   padding:14px 25px;
   text-decoration:none;
   border-radius:8px;
-  font-size:20px;
-  font-weight:bold;
+  font-size:22px;
+  font-weight:400;
 }
 .card a:hover {
   background:#43a047;
 }
 
-/* Swipe Feedback Overlay */
-.card:before {
+/* Swipe overlay inside card */
+.card .swipe-overlay {
   content:'';
   position:absolute;
   top:0; left:0; right:0; bottom:0;
   background:transparent;
-  z-index:10;
+  z-index:5;
   pointer-events:none;
   transition:background 0.2s;
 }
 
+/* Swipe Icons */
 .swipe-icon {
   position:absolute;
   top:50%;
   transform:translateY(-50%);
   font-size:60px;
   opacity:0;
-  z-index:11;
+  z-index:6;
   pointer-events:none;
   transition:opacity 0.2s, transform 0.2s;
 }
@@ -284,8 +265,6 @@ button:hover {
   height:60px;
   fill:#fff;
 }
-
-/* Place swipe icons on either side depending on direction */
 .swipe-icon.left {
   left:20px;
 }
@@ -349,7 +328,7 @@ button:hover {
     font-size:24px;
   }
   .card p {
-    font-size:18px;
+    font-size:20px;
   }
   .card a {
     font-size:18px;
@@ -360,14 +339,15 @@ button:hover {
     height:50px;
   }
   .action-btn svg {
-    width:24px;height:24px;
+    width:24px;
+    height:24px;
   }
 }
 </style>
 </head>
 <body>
 <header>
-<h1 class="bangers-regular">Find Your Next Adventure</h1>
+<h1>Find Your Next Adventure</h1>
 </header>
 
 <div class="wizard">
@@ -529,7 +509,7 @@ button:hover {
 const GSheetURL="https://docs.google.com/spreadsheets/d/e/2PACX-1vQbq36KXieC6aKe3KfwM7162IGCZE-WAKHJ7xyScSLrvs92G64vp4BkFaAn0ikrObiBY0jZUYX1Ugpz/pub?gid=0&single=true&output=csv";
 
 let allData=[];
-let swipedStack=[]; // for undo
+let swipedStack=[];
 const steps=document.querySelectorAll('.wizard-step');
 let currentStep=0;
 
@@ -556,7 +536,6 @@ document.querySelector('.finish-btn').addEventListener('click',()=>{
   showResults();
 });
 
-// Set up "Select All" toggles
 setupSelectAll('regionList','regionAll');
 setupSelectAll('budgetList','budgetAll');
 setupSelectAll('activitiesList','activitiesAll');
@@ -618,7 +597,6 @@ function getSelectedValues(containerId,allId){
 }
 
 function filterData(data,regions,budgets,activities,climates){
-  // Show matches if item has ANY of the selected filters in each category
   return data.filter(item=>{
     let regionMatch=regions.length===0||item.Region.split(",").map(i=>i.trim()).some(r=>regions.includes(r));
     let budgetMatch=budgets.length===0||item.BudgetLevel.split(",").map(i=>i.trim()).some(b=>budgets.includes(b));
@@ -670,6 +648,7 @@ function showResults(){
 
     card.style.zIndex=filtered.length-i;
     card.innerHTML=`
+      <div class="swipe-overlay"></div>
       <h2>${dest.Destination}</h2>
       <p><strong>Region:</strong> ${dest.Region}<br>
       <strong>Budget:</strong> ${dest.BudgetLevel}<br>
@@ -696,22 +675,19 @@ function showResults(){
     let startX=0,currentX=0;
     let dragging=false;
 
+    const overlay=card.querySelector('.swipe-overlay');
+    const leftIcon=card.querySelector('.swipe-icon.left');
+    const rightIcon=card.querySelector('.swipe-icon.right');
+
     function updateSwipeVisual(){
       const percent = currentX / (card.offsetWidth/2);
-      const overlay = card.querySelector(':before');
-      const leftIcon=card.querySelector('.swipe-icon.left');
-      const rightIcon=card.querySelector('.swipe-icon.right');
-
       if(percent < 0) {
-        // Swipe left
-        card.style.backgroundColor=''; 
         overlay.style.background=`rgba(255,82,82,${Math.min(Math.abs(percent),1)*0.3})`;
         leftIcon.style.display='block';
         leftIcon.style.opacity=Math.min(Math.abs(percent),1);
         leftIcon.style.transform=`translateY(-50%) scale(${0.5+Math.min(Math.abs(percent),1)*0.5})`;
         rightIcon.style.display='none';
       } else if(percent > 0) {
-        // Swipe right
         overlay.style.background=`rgba(76,175,80,${Math.min(percent,1)*0.3})`;
         rightIcon.style.display='block';
         rightIcon.style.opacity=Math.min(percent,1);
@@ -777,21 +753,19 @@ function showResults(){
 }
 
 function endSwipe(card,currentX){
+  const overlay=card.querySelector('.swipe-overlay');
   const leftIcon=card.querySelector('.swipe-icon.left');
   const rightIcon=card.querySelector('.swipe-icon.right');
   if(currentX>100){
-    // Swiped right (like)
     storeCardForUndo(card);
     card.style.transform=`translate(1000px,-50%)`;
     setTimeout(()=>card.remove(),300);
   }else if(currentX<-100){
-    // Swiped left (reject)
     storeCardForUndo(card);
     card.style.transform=`translate(-1000px,-50%)`;
     setTimeout(()=>card.remove(),300);
   }else{
     card.style.transform=`translate(-50%,-50%)`;
-    const overlay = card.querySelector(':before');
     overlay.style.background='transparent';
     if(leftIcon) leftIcon.style.display='none';
     if(rightIcon) rightIcon.style.display='none';
@@ -846,6 +820,7 @@ function undoLastSwipe(){
   newCard.style.zIndex=maxZ+1;
 
   newCard.innerHTML=`
+    <div class="swipe-overlay"></div>
     <h2>${lastCardData.Destination}</h2>
     <p><strong>Region:</strong> ${lastCardData.Region}<br>
     <strong>Budget:</strong> ${lastCardData.BudgetLevel}<br>
@@ -872,12 +847,12 @@ function undoLastSwipe(){
   let startX=0,currentX=0;
   let dragging=false;
 
+  const overlay=newCard.querySelector('.swipe-overlay');
+  const leftIcon=newCard.querySelector('.swipe-icon.left');
+  const rightIcon=newCard.querySelector('.swipe-icon.right');
+
   function updateSwipeVisual(){
     const percent = currentX / (newCard.offsetWidth/2);
-    const overlay = newCard.querySelector(':before');
-    const leftIcon=newCard.querySelector('.swipe-icon.left');
-    const rightIcon=newCard.querySelector('.swipe-icon.right');
-
     if(percent < 0) {
       overlay.style.background=`rgba(255,82,82,${Math.min(Math.abs(percent),1)*0.3})`;
       leftIcon.style.display='block';
