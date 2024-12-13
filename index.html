@@ -4,6 +4,10 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Youthful Travel Recommender</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
+
 <style>
 body {
   margin:0;
@@ -23,6 +27,12 @@ body {
   box-sizing:inherit;
 }
 
+.bangers-regular {
+  font-family: "Bangers", system-ui;
+  font-weight:400;
+  font-style:normal;
+}
+
 header {
   width:100%;
   text-align:center;
@@ -30,12 +40,16 @@ header {
 }
 header h1 {
   margin:0;
-  font-size:32px;
+  font-size:38px;
   color:#333;
   text-shadow:0 1px 3px rgba(0,0,0,0.1);
   font-weight:700;
 }
+header h1.bangers-regular {
+  font-size:48px;
+}
 
+/* Wizard Container */
 .wizard {
   background:rgba(255,255,255,0.95);
   width:90%;
@@ -46,14 +60,12 @@ header h1 {
   box-shadow:0 5px 20px rgba(0,0,0,0.1);
   display:flex;
   flex-direction:column;
-  gap:25px;
   position:relative;
 }
 
 .wizard-step {
   display:none;
   flex-direction:column;
-  gap:20px;
 }
 .wizard-step.active {
   display:flex;
@@ -61,7 +73,7 @@ header h1 {
 
 label {
   font-weight:bold;
-  font-size:20px;
+  font-size:24px;
   margin-bottom:10px;
   color:#444;
 }
@@ -70,22 +82,26 @@ label {
 .checkbox-list {
   display:flex;
   flex-direction:column;
-  gap:15px;
+  border:1px solid #ccc;
+  border-radius:8px;
 }
 .checkbox-item {
   display:block;
   position:relative;
   cursor:pointer;
-  font-size:18px;
+  font-size:20px;
   font-weight:500;
   color:#333;
   line-height:1.4;
-  padding:10px;
-  border-radius:8px;
+  padding:15px 10px;
   transition:background 0.3s;
+  border-bottom:1px solid #ccc;
 }
 .checkbox-item:hover {
   background:rgba(0,0,0,0.05);
+}
+.checkbox-item:last-child {
+  border-bottom:none;
 }
 .checkbox-item input[type="checkbox"] {
   position:absolute;
@@ -105,9 +121,10 @@ label {
   background:#fff;
   transition:border-color 0.3s, background 0.3s;
   box-sizing:border-box;
+  position:relative;
 }
 .checkbox-item input[type="checkbox"]:checked ~ .custom-check {
-  background:#FF4081;
+  background:#fff;
   border-color:#FF4081;
 }
 .checkbox-item .custom-check:after {
@@ -115,11 +132,11 @@ label {
   position:absolute;
   width:8px;
   height:16px;
-  border:2px solid #fff;
+  border:2px solid #FF4081;
   border-top:none;
   border-right:none;
   transform:rotate(-45deg);
-  top:2px;left:8px;
+  top:1px;left:7px;
   opacity:0;
   transition:opacity 0.2s;
 }
@@ -136,13 +153,14 @@ label {
   display:flex;
   justify-content:space-between;
   gap:10px;
+  margin-top:20px;
 }
 button {
   flex:1;
   padding:14px 25px;
   border:none;
   border-radius:10px;
-  font-size:18px;
+  font-size:20px;
   cursor:pointer;
   background:#FF4081;
   color:#fff;
@@ -179,7 +197,7 @@ button:hover {
   text-align:center;
   margin-bottom:20px;
   color:#333;
-  font-size:20px;
+  font-size:22px;
   font-weight:bold;
   text-shadow:0 1px 2px rgba(255,255,255,0.7);
 }
@@ -202,22 +220,25 @@ button:hover {
   box-shadow:0 4px 15px rgba(0,0,0,0.1);
   padding:30px 20px;
   text-align:center;
-  transition:transform 0.3s;
+  transition:transform 0.3s, background-color 0.3s;
   user-select:none;
   display:flex;
   flex-direction:column;
   justify-content:center;
   max-height:80%;
+  overflow:hidden;
+  position:relative;
 }
+
 .card h2 {
   margin:0 0 20px;
-  font-size:26px;
+  font-size:28px;
   color:#333;
   font-weight:600;
 }
 .card p {
   margin:0;
-  font-size:18px;
+  font-size:20px;
   line-height:1.6;
   color:#555;
   margin-bottom:20px;
@@ -230,11 +251,46 @@ button:hover {
   padding:14px 25px;
   text-decoration:none;
   border-radius:8px;
-  font-size:18px;
+  font-size:20px;
   font-weight:bold;
 }
 .card a:hover {
   background:#43a047;
+}
+
+/* Swipe Feedback Overlay */
+.card:before {
+  content:'';
+  position:absolute;
+  top:0; left:0; right:0; bottom:0;
+  background:transparent;
+  z-index:10;
+  pointer-events:none;
+  transition:background 0.2s;
+}
+
+.swipe-icon {
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:60px;
+  opacity:0;
+  z-index:11;
+  pointer-events:none;
+  transition:opacity 0.2s, transform 0.2s;
+}
+.swipe-icon svg {
+  width:60px;
+  height:60px;
+  fill:#fff;
+}
+
+/* Place swipe icons on either side depending on direction */
+.swipe-icon.left {
+  left:20px;
+}
+.swipe-icon.right {
+  right:20px;
 }
 
 /* Tinder-style Buttons */
@@ -290,13 +346,13 @@ button:hover {
     padding:20px;
   }
   .card h2 {
-    font-size:22px;
+    font-size:24px;
   }
   .card p {
-    font-size:16px;
+    font-size:18px;
   }
   .card a {
-    font-size:16px;
+    font-size:18px;
     padding:12px 20px;
   }
   .action-btn {
@@ -311,7 +367,7 @@ button:hover {
 </head>
 <body>
 <header>
-<h1>Find Your Next Adventure</h1>
+<h1 class="bangers-regular">Find Your Next Adventure</h1>
 </header>
 
 <div class="wizard">
@@ -444,10 +500,10 @@ button:hover {
   <div class="card-stack" id="cardStack"></div>
   <div class="actions">
     <div class="action-btn reject" id="rejectBtn">
-      <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 
-      5 6.41 10.59 12 5 17.59 6.41 19 12 
-      13.41 17.59 19 19 17.59 13.41 12z"/>
-      </svg>
+      <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 
+      10.59 6.41 5 5 6.41 10.59 12 5 17.59 
+      6.41 19 12 13.41 17.59 19 19 17.59 
+      13.41 12z"/></svg>
     </div>
     <div class="action-btn undo" id="undoBtn">
       <svg viewBox="0 0 24 24"><path d="M12 5c-3.86 0-7 
@@ -473,11 +529,10 @@ button:hover {
 const GSheetURL="https://docs.google.com/spreadsheets/d/e/2PACX-1vQbq36KXieC6aKe3KfwM7162IGCZE-WAKHJ7xyScSLrvs92G64vp4BkFaAn0ikrObiBY0jZUYX1Ugpz/pub?gid=0&single=true&output=csv";
 
 let allData=[];
-let swipedStack=[]; // to store swiped cards for undo
+let swipedStack=[]; // for undo
 const steps=document.querySelectorAll('.wizard-step');
 let currentStep=0;
 
-// Wizard nav
 document.querySelectorAll('.next-btn').forEach(btn=>{
   btn.addEventListener('click',()=>{
     if(currentStep<steps.length-1){
@@ -563,8 +618,8 @@ function getSelectedValues(containerId,allId){
 }
 
 function filterData(data,regions,budgets,activities,climates){
+  // Show matches if item has ANY of the selected filters in each category
   return data.filter(item=>{
-    // Show matches if item has ANY of the selected filters in each category
     let regionMatch=regions.length===0||item.Region.split(",").map(i=>i.trim()).some(r=>regions.includes(r));
     let budgetMatch=budgets.length===0||item.BudgetLevel.split(",").map(i=>i.trim()).some(b=>budgets.includes(b));
     let activityMatch=activities.length===0||item.Activities.split(",").map(i=>i.trim()).some(a=>activities.includes(a));
@@ -591,9 +646,9 @@ function showResults(){
     return;
   }
 
-  // Hide the wizard since we only want to show results now
+  // Hide the wizard
   wizard.style.display='none';
-  
+
   resultsSection.style.display='flex';
   actions.style.display='flex';
 
@@ -621,11 +676,53 @@ function showResults(){
       <strong>Activities:</strong> ${dest.Activities}<br>
       <strong>Climate:</strong> ${dest.Climate}</p>
       <a href="${dest.Reflink}" target="_blank">Book Now</a>
+      <div class="swipe-icon left" style="display:none;">
+        <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 
+        10.59 6.41 5 5 6.41 10.59 12 5 17.59 
+        6.41 19 12 13.41 17.59 19 19 17.59 
+        13.41 12z"/></svg>
+      </div>
+      <div class="swipe-icon right" style="display:none;">
+        <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 
+        15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 
+        3c1.74 0 3.41.81 4.5 2.09C13.09 
+        3.81 14.76 3 16.5 3 19.58 3 22 
+        5.42 22 8.5c0 3.78-3.4 6.86-8.55 
+        11.54L12 21.35z"/></svg>
+      </div>
     `;
     cardStack.appendChild(card);
 
     let startX=0,currentX=0;
     let dragging=false;
+
+    function updateSwipeVisual(){
+      const percent = currentX / (card.offsetWidth/2);
+      const overlay = card.querySelector(':before');
+      const leftIcon=card.querySelector('.swipe-icon.left');
+      const rightIcon=card.querySelector('.swipe-icon.right');
+
+      if(percent < 0) {
+        // Swipe left
+        card.style.backgroundColor=''; 
+        overlay.style.background=`rgba(255,82,82,${Math.min(Math.abs(percent),1)*0.3})`;
+        leftIcon.style.display='block';
+        leftIcon.style.opacity=Math.min(Math.abs(percent),1);
+        leftIcon.style.transform=`translateY(-50%) scale(${0.5+Math.min(Math.abs(percent),1)*0.5})`;
+        rightIcon.style.display='none';
+      } else if(percent > 0) {
+        // Swipe right
+        overlay.style.background=`rgba(76,175,80,${Math.min(percent,1)*0.3})`;
+        rightIcon.style.display='block';
+        rightIcon.style.opacity=Math.min(percent,1);
+        rightIcon.style.transform=`translateY(-50%) scale(${0.5+Math.min(percent,1)*0.5})`;
+        leftIcon.style.display='none';
+      } else {
+        overlay.style.background='transparent';
+        leftIcon.style.display='none';
+        rightIcon.style.display='none';
+      }
+    }
 
     // Touch
     card.addEventListener('touchstart',e=>{
@@ -636,6 +733,7 @@ function showResults(){
       if(!dragging)return;
       currentX=e.touches[0].clientX-startX;
       card.style.transform=`translate(${currentX}px,-50%) rotate(${currentX/20}deg)`;
+      updateSwipeVisual();
     });
     card.addEventListener('touchend',()=>{
       endSwipe(card,currentX);
@@ -651,6 +749,7 @@ function showResults(){
       if(!dragging)return;
       currentX=e.clientX-startX;
       card.style.transform=`translate(${currentX}px,-50%) rotate(${currentX/20}deg)`;
+      updateSwipeVisual();
     });
     card.addEventListener('mouseup',()=>{
       endSwipe(card,currentX);
@@ -678,6 +777,8 @@ function showResults(){
 }
 
 function endSwipe(card,currentX){
+  const leftIcon=card.querySelector('.swipe-icon.left');
+  const rightIcon=card.querySelector('.swipe-icon.right');
   if(currentX>100){
     // Swiped right (like)
     storeCardForUndo(card);
@@ -690,6 +791,10 @@ function endSwipe(card,currentX){
     setTimeout(()=>card.remove(),300);
   }else{
     card.style.transform=`translate(-50%,-50%)`;
+    const overlay = card.querySelector(':before');
+    overlay.style.background='transparent';
+    if(leftIcon) leftIcon.style.display='none';
+    if(rightIcon) rightIcon.style.display='none';
   }
 }
 
@@ -747,11 +852,50 @@ function undoLastSwipe(){
     <strong>Activities:</strong> ${lastCardData.Activities}<br>
     <strong>Climate:</strong> ${lastCardData.Climate}</p>
     <a href="${lastCardData.Reflink}" target="_blank">Book Now</a>
+    <div class="swipe-icon left" style="display:none;">
+      <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 
+      10.59 6.41 5 5 6.41 10.59 12 5 17.59 
+      6.41 19 12 13.41 17.59 19 19 17.59 
+      13.41 12z"/></svg>
+    </div>
+    <div class="swipe-icon right" style="display:none;">
+      <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 
+      15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 
+      3c1.74 0 3.41.81 4.5 2.09C13.09 
+      3.81 14.76 3 16.5 3 19.58 3 22 
+      5.42 22 8.5c0 3.78-3.4 6.86-8.55 
+      11.54L12 21.35z"/></svg>
+    </div>
   `;
   cardStack.appendChild(newCard);
 
   let startX=0,currentX=0;
   let dragging=false;
+
+  function updateSwipeVisual(){
+    const percent = currentX / (newCard.offsetWidth/2);
+    const overlay = newCard.querySelector(':before');
+    const leftIcon=newCard.querySelector('.swipe-icon.left');
+    const rightIcon=newCard.querySelector('.swipe-icon.right');
+
+    if(percent < 0) {
+      overlay.style.background=`rgba(255,82,82,${Math.min(Math.abs(percent),1)*0.3})`;
+      leftIcon.style.display='block';
+      leftIcon.style.opacity=Math.min(Math.abs(percent),1);
+      leftIcon.style.transform=`translateY(-50%) scale(${0.5+Math.min(Math.abs(percent),1)*0.5})`;
+      rightIcon.style.display='none';
+    } else if(percent > 0) {
+      overlay.style.background=`rgba(76,175,80,${Math.min(percent,1)*0.3})`;
+      rightIcon.style.display='block';
+      rightIcon.style.opacity=Math.min(percent,1);
+      rightIcon.style.transform=`translateY(-50%) scale(${0.5+Math.min(percent,1)*0.5})`;
+      leftIcon.style.display='none';
+    } else {
+      overlay.style.background='transparent';
+      leftIcon.style.display='none';
+      rightIcon.style.display='none';
+    }
+  }
 
   newCard.addEventListener('touchstart',e=>{
     dragging=true;
@@ -761,6 +905,7 @@ function undoLastSwipe(){
     if(!dragging)return;
     currentX=e.touches[0].clientX-startX;
     newCard.style.transform=`translate(${currentX}px,-50%) rotate(${currentX/20}deg)`;
+    updateSwipeVisual();
   });
   newCard.addEventListener('touchend',()=>{
     endSwipe(newCard,currentX);
@@ -775,6 +920,7 @@ function undoLastSwipe(){
     if(!dragging)return;
     currentX=e.clientX-startX;
     newCard.style.transform=`translate(${currentX}px,-50%) rotate(${currentX/20}deg)`;
+    updateSwipeVisual();
   });
   newCard.addEventListener('mouseup',()=>{
     endSwipe(newCard,currentX);
