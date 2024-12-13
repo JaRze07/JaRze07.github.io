@@ -7,7 +7,7 @@
 <style>
 body{
   font-family:'Helvetica Neue',Arial,sans-serif;
-  background:#f7f7f7;
+  background:linear-gradient(135deg, #FF8A65, #FFB74D);
   margin:0;padding:0;
   display:flex;flex-direction:column;
   align-items:center;
@@ -16,11 +16,12 @@ body{
 }
 header{
   width:100%;
-  background:#FF8A65;
+  background:rgba(255,255,255,0.2);
   color:#fff;
   padding:20px;
   text-align:center;
   box-shadow:0 2px 5px rgba(0,0,0,0.2);
+  backdrop-filter:blur(5px);
 }
 h1{
   margin:0;
@@ -36,8 +37,9 @@ h1{
   box-shadow:0 2px 10px rgba(0,0,0,0.1);
   display:flex;
   flex-direction:column;
-  gap:15px;
+  gap:20px;
   transition:all 0.3s ease;
+  position:relative;
 }
 .wizard-step{
   display:none;
@@ -70,6 +72,7 @@ select, .activities-container{
   padding:5px 10px;
   cursor:pointer;
   user-select:none;
+  transition:background 0.3s,color 0.3s;
 }
 .activity-item.selected{
   background:#FF8A65;
@@ -85,6 +88,7 @@ button{
   color:#fff;
   transition:background 0.3s;
   margin-top:10px;
+  align-self:center;
 }
 button:hover{
   background:#ff7a53;
@@ -96,6 +100,7 @@ button:hover{
   position:relative;
   height:500px;
   overflow:hidden;
+  display:none;
 }
 .card-stack{
   position:absolute;
@@ -111,8 +116,8 @@ button:hover{
   transform:translate(-50%,-50%);
   width:90%;
   background:#fff;
-  border-radius:10px;
-  box-shadow:0 2px 10px rgba(0,0,0,0.1);
+  border-radius:20px;
+  box-shadow:0 5px 20px rgba(0,0,0,0.2);
   padding:20px;
   text-align:center;
   transition:transform 0.3s;
@@ -124,6 +129,7 @@ button:hover{
 }
 .card h2{
   margin:0 0 10px;
+  font-size:22px;
 }
 .card p{
   margin:0;
@@ -140,14 +146,54 @@ button:hover{
   border-radius:5px;
   font-size:14px;
 }
-.hidden{
-  display:none;
+.card a:hover{
+  background:#43a047;
 }
+
 .swipe-hint{
   text-align:center;
   margin:20px 0;
-  color:#666;
-  font-size:14px;
+  color:#fff;
+  font-size:16px;
+  font-weight:bold;
+  text-shadow:0 1px 2px rgba(0,0,0,0.5);
+}
+
+.arrows{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  width:100%;
+  display:flex;
+  justify-content:space-between;
+  pointer-events:none;
+}
+.arrow-btn{
+  pointer-events:auto;
+  background:rgba(255,255,255,0.7);
+  width:40px;height:40px;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:50%;
+  box-shadow:0 2px 5px rgba(0,0,0,0.3);
+  cursor:pointer;
+  margin:0 10px;
+  transition:background 0.3s;
+}
+.arrow-btn:hover{
+  background:rgba(255,255,255,0.9);
+}
+.arrow-btn:active{
+  transform:scale(0.95);
+}
+.arrow-btn.left{
+  margin-left:15px;
+}
+.arrow-btn.right{
+  margin-right:15px;
+}
+.arrow-btn svg{
+  width:20px;height:20px;
+  fill:#FF8A65;
 }
 </style>
 </head>
@@ -205,8 +251,16 @@ button:hover{
   </div>
 </div>
 
-<div class="results-section hidden">
-  <div class="swipe-hint">Swipe left or right on the cards</div>
+<div class="results-section">
+  <div class="swipe-hint">Drag cards or use arrows to swipe</div>
+  <div class="arrows">
+    <div class="arrow-btn left" id="leftBtn">
+      <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+    </div>
+    <div class="arrow-btn right" id="rightBtn">
+      <svg viewBox="0 0 24 24"><path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/></svg>
+    </div>
+  </div>
   <div class="card-stack" id="cardStack"></div>
 </div>
 
@@ -214,8 +268,6 @@ button:hover{
 const GSheetURL="https://docs.google.com/spreadsheets/d/e/2PACX-1vQbq36KXieC6aKe3KfwM7162IGCZE-WAKHJ7xyScSLrvs92G64vp4BkFaAn0ikrObiBY0jZUYX1Ugpz/pub?gid=0&single=true&output=csv";
 
 let allData=[];
-
-// Wizard navigation
 const steps=document.querySelectorAll('.wizard-step');
 let currentStep=0;
 document.querySelectorAll('.next-btn').forEach(btn=>{
@@ -236,10 +288,8 @@ document.querySelectorAll('.prev-btn').forEach(btn=>{
     }
   });
 });
-
 document.querySelector('.finish-btn').addEventListener('click',()=>{
   steps[currentStep].classList.remove('active');
-  // Now filter and show results
   showResults();
 });
 
@@ -273,7 +323,6 @@ function filterData(data,region,budget,activities,climate){
     let budgetMatch=!budget||item.BudgetLevel.split(",").map(i=>i.trim()).includes(budget);
     let climateMatch=!climate||item.Climate.split(",").map(i=>i.trim()).includes(climate);
 
-    // For activities, we will ensure at least one of the selected activities is present
     let itemActivities=item.Activities.split(",").map(i=>i.trim());
     let activitiesMatch=true;
     if(activities.length>0){
@@ -298,11 +347,10 @@ function showResults(){
     alert("No matching destinations found!");
     return;
   }
-  resultsSection.classList.remove('hidden');
+  resultsSection.style.display='block';
 
-  // Shuffle the filtered results for randomness
   for(let i=filtered.length-1;i>0;i--){
-    const j=Math.floor(Math.random()* (i+1));
+    const j=Math.floor(Math.random()*(i+1));
     [filtered[i],filtered[j]]=[filtered[j],filtered[i]];
   }
 
@@ -322,6 +370,8 @@ function showResults(){
 
     let startX=0,currentX=0;
     let dragging=false;
+
+    // Touch events
     card.addEventListener('touchstart',e=>{
       dragging=true;
       startX=e.touches[0].clientX;
@@ -331,22 +381,68 @@ function showResults(){
       currentX=e.touches[0].clientX-startX;
       card.style.transform=`translate(${currentX}px,-50%) rotate(${currentX/20}deg)`;
     });
-    card.addEventListener('touchend',e=>{
+    card.addEventListener('touchend',()=>{
+      endSwipe(card,currentX);
       dragging=false;
-      if(currentX>100){ 
-        // Swiped right (like)
-        card.style.transform=`translate(1000px,-50%)`;
-        setTimeout(()=>card.remove(),300);
-      }else if(currentX<-100){ 
-        // Swiped left (dislike)
-        card.style.transform=`translate(-1000px,-50%)`;
-        setTimeout(()=>card.remove(),300);
-      }else{
-        // Snap back
-        card.style.transform=`translate(-50%,-50%)`;
+    });
+
+    // Mouse events for PC
+    card.addEventListener('mousedown',e=>{
+      dragging=true;
+      startX=e.clientX;
+    });
+    card.addEventListener('mousemove',e=>{
+      if(!dragging)return;
+      currentX=e.clientX-startX;
+      card.style.transform=`translate(${currentX}px,-50%) rotate(${currentX/20}deg)`;
+    });
+    card.addEventListener('mouseup',()=>{
+      endSwipe(card,currentX);
+      dragging=false;
+    });
+    card.addEventListener('mouseleave',()=>{
+      if(dragging){
+        endSwipe(card,currentX);
+        dragging=false;
       }
     });
   });
+
+  const leftBtn=document.getElementById('leftBtn');
+  const rightBtn=document.getElementById('rightBtn');
+  leftBtn.addEventListener('click',()=>{
+    const topCard=getTopCard();
+    if(topCard) swipeCard(topCard,-200);
+  });
+  rightBtn.addEventListener('click',()=>{
+    const topCard=getTopCard();
+    if(topCard) swipeCard(topCard,200);
+  });
+}
+
+function endSwipe(card,currentX){
+  if(currentX>100){
+    card.style.transform=`translate(1000px,-50%)`;
+    setTimeout(()=>card.remove(),300);
+  }else if(currentX<-100){
+    card.style.transform=`translate(-1000px,-50%)`;
+    setTimeout(()=>card.remove(),300);
+  }else{
+    card.style.transform=`translate(-50%,-50%)`;
+  }
+}
+
+function getTopCard(){
+  const cards=[...document.querySelectorAll('.card')];
+  if(cards.length===0)return null;
+  return cards.reduce((top,c)=>{
+    return parseInt(c.style.zIndex)>parseInt(top.style.zIndex)?c:top;
+  });
+}
+
+function swipeCard(card,direction){
+  card.style.transform=`translate(${direction>0?1000:-1000}px,-50%)`;
+  setTimeout(()=>card.remove(),300);
 }
 
 // Init
