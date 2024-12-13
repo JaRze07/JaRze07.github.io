@@ -4,27 +4,42 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Youthful Travel Recommender</title>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
+<!-- Using both Bangers and Shantell Sans -->
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Shantell+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
 
 <style>
 body {
   margin:0;
   padding:0;
-  font-family: "Bangers", system-ui, sans-serif; /* Using Bangers for all text */
   background: linear-gradient(135deg, #FFDEE9, #B5FFFC);
   display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:flex-start;
   min-height:100vh;
-  color:#333;
   box-sizing:border-box;
-  font-size:18px;
 }
-*, *:before, *:after {
-  box-sizing:inherit;
+
+/* Font classes */
+.bangers-regular {
+  font-family: "Bangers", system-ui;
+  font-weight:400;
+  font-style:normal;
+}
+.shantell-sans-regular {
+  font-family:"Shantell Sans", cursive;
+  font-weight:400;
+  font-style:normal;
+  font-variation-settings: "BNCE" 0,"INFM" 0,"SPAC" 0;
+}
+.shantell-sans-semibold {
+  font-family:"Shantell Sans", cursive;
+  font-weight:600;
+  font-style:normal;
+  font-variation-settings: "BNCE" 0,"INFM" 0,"SPAC" 0;
 }
 
 header {
@@ -37,7 +52,11 @@ header h1 {
   font-size:48px;
   color:#333;
   text-shadow:0 1px 3px rgba(0,0,0,0.1);
-  font-weight:400; /* Using normal weight for Bangers is still quite bold */
+}
+header h1 {
+  /* Heading in Bangers */
+  font-family:"Bangers",system-ui;
+  font-weight:400;
 }
 
 /* Wizard Container */
@@ -53,37 +72,39 @@ header h1 {
   flex-direction:column;
   position:relative;
 }
-
 .wizard-step {
   display:none;
   flex-direction:column;
+  font-size:20px;
 }
 .wizard-step.active {
   display:flex;
 }
-
-label {
+.wizard-step > label {
   font-size:24px;
-  margin-bottom:20px;
   color:#444;
-  font-weight:400; /* Not bold, to make it lighter */
+  font-weight:600; /* Semibold for labels */
+  font-family:"Shantell Sans",cursive;
 }
 
-/* Checkbox List Styles */
 .checkbox-list {
   display:flex;
   flex-direction:column;
-  /* no borders or lines */
+  /* No borders or lines between items */
+  background:transparent;
 }
 .checkbox-item {
   display:flex;
   align-items:center;
   cursor:pointer;
   font-size:22px;
-  font-weight:400;
+  font-weight:400; /* 400 for multi-select items */
+  font-family:"Shantell Sans",cursive;
   color:#333;
   line-height:1.4;
   padding:15px 10px;
+  margin:0;
+  background:transparent;
   transition:background 0.3s;
 }
 .checkbox-item:hover {
@@ -96,19 +117,17 @@ label {
   height:0;
   width:0;
 }
-.checkbox-item .custom-check {
+.custom-check {
   display:inline-block;
   width:24px;
   height:24px;
   border:2px solid #FF4081;
   border-radius:4px;
   margin-right:10px;
-  vertical-align:middle;
-  background:#fff;
-  position:relative;
   flex-shrink:0;
+  position:relative;
 }
-.checkbox-item .custom-check:after {
+.custom-check:after {
   content:'';
   position:absolute;
   width:8px;
@@ -116,18 +135,20 @@ label {
   border:2px solid #FF4081;
   border-top:none;
   border-left:none;
-  transform:rotate(45deg); /* Normal tick orientation */
-  top:1px;left:8px;
+  transform:rotate(45deg);
+  top:-1px;left:7px;
   opacity:0;
   transition:opacity 0.2s;
 }
 .checkbox-item input[type="checkbox"]:checked ~ .custom-check:after {
   opacity:1;
 }
-.checkbox-item .checkbox-label {
+.checkbox-label {
   vertical-align:middle;
   display:inline-block;
   user-select:none;
+  font-family:"Shantell Sans",cursive;
+  font-weight:400;
 }
 
 /* Button Group */
@@ -147,7 +168,8 @@ button {
   background:#FF4081;
   color:#fff;
   transition:background 0.3s;
-  font-weight:400;
+  font-weight:600; /* Semibold for buttons */
+  font-family:"Shantell Sans",cursive;
   text-align:center;
 }
 button:hover {
@@ -174,16 +196,15 @@ button:hover {
   margin-bottom:50px;
   padding:0 10px;
 }
-
 .swipe-hint {
   text-align:center;
   margin-bottom:20px;
   color:#333;
   font-size:28px;
-  font-weight:400;
+  font-weight:600; /* semibold */
+  font-family:"Shantell Sans",cursive;
   text-shadow:0 1px 2px rgba(255,255,255,0.7);
 }
-
 .card-stack {
   position:relative;
   width:100%;
@@ -208,13 +229,14 @@ button:hover {
   justify-content:center;
   max-height:80%;
   overflow:hidden;
+  font-family:"Shantell Sans",cursive;
+  font-weight:600; /* semibold for card content */
 }
-
 .card h2 {
   margin:0 0 20px;
   font-size:28px;
   color:#333;
-  font-weight:400;
+  font-weight:600;
 }
 .card p {
   margin:0;
@@ -222,6 +244,7 @@ button:hover {
   line-height:1.6;
   color:#555;
   margin-bottom:20px;
+  font-weight:600;
 }
 .card a {
   display:inline-block;
@@ -232,15 +255,13 @@ button:hover {
   text-decoration:none;
   border-radius:8px;
   font-size:22px;
-  font-weight:400;
+  font-weight:600;
 }
 .card a:hover {
   background:#43a047;
 }
 
-/* Swipe overlay inside card */
 .card .swipe-overlay {
-  content:'';
   position:absolute;
   top:0; left:0; right:0; bottom:0;
   background:transparent;
@@ -265,11 +286,12 @@ button:hover {
   height:60px;
   fill:#fff;
 }
+/* User wants: On right swipe show heart on LEFT, on left swipe show X on RIGHT */
 .swipe-icon.left {
-  left:20px;
+  left:20px; /* heart icon will appear on left for positive swipe */
 }
 .swipe-icon.right {
-  right:20px;
+  right:20px; /* X icon on right for negative swipe */
 }
 
 /* Tinder-style Buttons */
@@ -283,7 +305,6 @@ button:hover {
   z-index:999;
   display:none;
 }
-
 .action-btn {
   width:60px;
   height:60px;
@@ -347,130 +368,130 @@ button:hover {
 </head>
 <body>
 <header>
-<h1>Find Your Next Adventure</h1>
+<h1 class="bangers-regular">Find Your Next Adventure</h1>
 </header>
 
 <div class="wizard">
   <!-- Regions -->
   <div class="wizard-step step-1 active">
-    <label>Select Regions (multi-select):</label>
+    <label class="shantell-sans-semibold">Select Regions (multi-select):</label>
     <div class="checkbox-list" id="regionList">
       <label class="checkbox-item">
         <input type="checkbox" id="regionAll"/>
-        <span class="custom-check"></span><span class="checkbox-label">Select All</span>
+        <span class="custom-check"></span><span class="checkbox-label shantell-sans-regular">Select All</span>
       </label>
       <label class="checkbox-item">
         <input type="checkbox" id="regionEurope" value="Europe"/>
-        <span class="custom-check"></span><span class="checkbox-label">Europe</span>
+        <span class="custom-check"></span><span class="checkbox-label shantell-sans-regular">Europe</span>
       </label>
       <label class="checkbox-item">
         <input type="checkbox" id="regionAsia" value="Asia"/>
-        <span class="custom-check"></span><span class="checkbox-label">Asia</span>
+        <span class="custom-check"></span><span class="checkbox-label shantell-sans-regular">Asia</span>
       </label>
       <label class="checkbox-item">
         <input type="checkbox" id="regionAmericas" value="Americas"/>
-        <span class="custom-check"></span><span class="checkbox-label">Americas</span>
+        <span class="custom-check"></span><span class="checkbox-label shantell-sans-regular">Americas</span>
       </label>
       <label class="checkbox-item">
         <input type="checkbox" id="regionOceania" value="Oceania"/>
-        <span class="custom-check"></span><span class="checkbox-label">Oceania</span>
+        <span class="custom-check"></span><span class="checkbox-label shantell-sans-regular">Oceania</span>
       </label>
       <label class="checkbox-item">
         <input type="checkbox" id="regionAfrica" value="Africa"/>
-        <span class="custom-check"></span><span class="checkbox-label">Africa</span>
+        <span class="custom-check"></span><span class="checkbox-label shantell-sans-regular">Africa</span>
       </label>
     </div>
     <div class="button-group">
-      <button class="next-btn">Next</button>
+      <button class="next-btn shantell-sans-semibold">Next</button>
     </div>
   </div>
 
   <!-- Budget -->
   <div class="wizard-step step-2">
-    <label>Select Budget Levels (multi-select):</label>
+    <label class="shantell-sans-semibold">Select Budget Levels (multi-select):</label>
     <div class="checkbox-list" id="budgetList">
       <label class="checkbox-item">
         <input type="checkbox" id="budgetAll"/>
-        <span class="custom-check"></span><span class="checkbox-label">Select All</span>
+        <span class="custom-check"></span><span class="checkbox-label shantell-sans-regular">Select All</span>
       </label>
       <label class="checkbox-item">
         <input type="checkbox" id="budgetCheap" value="Cheap"/>
-        <span class="custom-check"></span><span class="checkbox-label">Cheap</span>
+        <span class="custom-check"></span><span class="checkbox-label shantell-sans-regular">Cheap</span>
       </label>
       <label class="checkbox-item">
         <input type="checkbox" id="budgetMid" value="Mid-range"/>
-        <span class="custom-check"></span><span class="checkbox-label">Mid-range</span>
+        <span class="custom-check"></span><span class="checkbox-label shantell-sans-regular">Mid-range</span>
       </label>
       <label class="checkbox-item">
         <input type="checkbox" id="budgetLuxury" value="Luxury"/>
-        <span class="custom-check"></span><span class="checkbox-label">Luxury</span>
+        <span class="custom-check"></span><span class="checkbox-label shantell-sans-regular">Luxury</span>
       </label>
     </div>
     <div class="button-group">
-      <button class="prev-btn">Back</button>
-      <button class="next-btn">Next</button>
+      <button class="prev-btn shantell-sans-semibold">Back</button>
+      <button class="next-btn shantell-sans-semibold">Next</button>
     </div>
   </div>
 
   <!-- Activities -->
   <div class="wizard-step step-3">
-    <label>Select Activities (multi-select):</label>
+    <label class="shantell-sans-semibold">Select Activities (multi-select):</label>
     <div class="checkbox-list" id="activitiesList">
       <label class="checkbox-item">
         <input type="checkbox" id="activitiesAll"/>
-        <span class="custom-check"></span><span class="checkbox-label">Select All</span>
+        <span class="custom-check"></span><span class="checkbox-label shantell-sans-regular">Select All</span>
       </label>
       <label class="checkbox-item">
         <input type="checkbox" id="actBeach" value="Beach"/>
-        <span class="custom-check"></span><span class="checkbox-label">Beach</span>
+        <span class="custom-check"></span><span class="checkbox-label shantell-sans-regular">Beach</span>
       </label>
       <label class="checkbox-item">
         <input type="checkbox" id="actHiking" value="Hiking"/>
-        <span class="custom-check"></span><span class="checkbox-label">Hiking</span>
+        <span class="custom-check"></span><span class="checkbox-label shantell-sans-regular">Hiking</span>
       </label>
       <label class="checkbox-item">
         <input type="checkbox" id="actNightlife" value="Nightlife"/>
-        <span class="custom-check"></span><span class="checkbox-label">Nightlife</span>
+        <span class="custom-check"></span><span class="checkbox-label shantell-sans-regular">Nightlife</span>
       </label>
       <label class="checkbox-item">
         <input type="checkbox" id="actCulture" value="Culture"/>
-        <span class="custom-check"></span><span class="checkbox-label">Culture</span>
+        <span class="custom-check"></span><span class="checkbox-label shantell-sans-regular">Culture</span>
       </label>
       <label class="checkbox-item">
         <input type="checkbox" id="actShopping" value="Shopping"/>
-        <span class="custom-check"></span><span class="checkbox-label">Shopping</span>
+        <span class="custom-check"></span><span class="checkbox-label shantell-sans-regular">Shopping</span>
       </label>
     </div>
     <div class="button-group">
-      <button class="prev-btn">Back</button>
-      <button class="next-btn">Next</button>
+      <button class="prev-btn shantell-sans-semibold">Back</button>
+      <button class="next-btn shantell-sans-semibold">Next</button>
     </div>
   </div>
 
   <!-- Climate -->
   <div class="wizard-step step-4">
-    <label>Select Climates (multi-select):</label>
+    <label class="shantell-sans-semibold">Select Climates (multi-select):</label>
     <div class="checkbox-list" id="climateList">
       <label class="checkbox-item">
         <input type="checkbox" id="climateAll"/>
-        <span class="custom-check"></span><span class="checkbox-label">Select All</span>
+        <span class="custom-check"></span><span class="checkbox-label shantell-sans-regular">Select All</span>
       </label>
       <label class="checkbox-item">
         <input type="checkbox" id="climateWarm" value="Warm"/>
-        <span class="custom-check"></span><span class="checkbox-label">Warm</span>
+        <span class="custom-check"></span><span class="checkbox-label shantell-sans-regular">Warm</span>
       </label>
       <label class="checkbox-item">
         <input type="checkbox" id="climateCold" value="Cold"/>
-        <span class="custom-check"></span><span class="checkbox-label">Cold</span>
+        <span class="custom-check"></span><span class="checkbox-label shantell-sans-regular">Cold</span>
       </label>
       <label class="checkbox-item">
         <input type="checkbox" id="climateTemperate" value="Temperate"/>
-        <span class="custom-check"></span><span class="checkbox-label">Temperate</span>
+        <span class="custom-check"></span><span class="checkbox-label shantell-sans-regular">Temperate</span>
       </label>
     </div>
     <div class="button-group">
-      <button class="prev-btn">Back</button>
-      <button class="finish-btn">Find Destinations</button>
+      <button class="prev-btn shantell-sans-semibold">Back</button>
+      <button class="finish-btn shantell-sans-semibold">Find Destinations</button>
     </div>
   </div>
 </div>
@@ -656,18 +677,20 @@ function showResults(){
       <strong>Climate:</strong> ${dest.Climate}</p>
       <a href="${dest.Reflink}" target="_blank">Book Now</a>
       <div class="swipe-icon left" style="display:none;">
-        <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 
-        10.59 6.41 5 5 6.41 10.59 12 5 17.59 
-        6.41 19 12 13.41 17.59 19 19 17.59 
-        13.41 12z"/></svg>
-      </div>
-      <div class="swipe-icon right" style="display:none;">
+        <!-- Heart icon for positive swipe -->
         <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 
         15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 
         3c1.74 0 3.41.81 4.5 2.09C13.09 
         3.81 14.76 3 16.5 3 19.58 3 22 
         5.42 22 8.5c0 3.78-3.4 6.86-8.55 
         11.54L12 21.35z"/></svg>
+      </div>
+      <div class="swipe-icon right" style="display:none;">
+        <!-- X icon for negative swipe -->
+        <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 
+        10.59 6.41 5 5 6.41 10.59 12 5 17.59 
+        6.41 19 12 13.41 17.59 19 19 17.59 
+        13.41 12z"/></svg>
       </div>
     `;
     cardStack.appendChild(card);
@@ -679,21 +702,42 @@ function showResults(){
     const leftIcon=card.querySelector('.swipe-icon.left');
     const rightIcon=card.querySelector('.swipe-icon.right');
 
-    function updateSwipeVisual(){
-      const percent = currentX / (card.offsetWidth/2);
+    function updateSwipeVisual(cx){
+      const percent = cx/(card.offsetWidth/2);
+      const absP = Math.min(Math.abs(percent),1); 
+      // Show color from slightest movement, stronger near vanish
       if(percent < 0) {
-        overlay.style.background=`rgba(255,82,82,${Math.min(Math.abs(percent),1)*0.3})`;
-        leftIcon.style.display='block';
-        leftIcon.style.opacity=Math.min(Math.abs(percent),1);
-        leftIcon.style.transform=`translateY(-50%) scale(${0.5+Math.min(Math.abs(percent),1)*0.5})`;
-        rightIcon.style.display='none';
-      } else if(percent > 0) {
-        overlay.style.background=`rgba(76,175,80,${Math.min(percent,1)*0.3})`;
+        // Negative: swipe left -> show X on right
+        overlay.style.background=`rgba(255,82,82,${absP})`;
         rightIcon.style.display='block';
-        rightIcon.style.opacity=Math.min(percent,1);
-        rightIcon.style.transform=`translateY(-50%) scale(${0.5+Math.min(percent,1)*0.5})`;
+        rightIcon.style.opacity=absP;
+        rightIcon.style.transform=`translateY(-50%) scale(${0.5+absP*0.5})`;
         leftIcon.style.display='none';
+      } else if(percent > 0) {
+        // Positive: swipe right -> show Heart on left
+        overlay.style.background=`rgba(76,175,80,${absP})`;
+        leftIcon.style.display='block';
+        leftIcon.style.opacity=absP;
+        leftIcon.style.transform=`translateY(-50%) scale(${0.5+absP*0.5})`;
+        rightIcon.style.display='none';
       } else {
+        overlay.style.background='transparent';
+        leftIcon.style.display='none';
+        rightIcon.style.display='none';
+      }
+    }
+
+    function endSwipe(cx){
+      if(cx>100){
+        // animate out right
+        storeCardForUndo(card);
+        animateSwipeOut(card,cx,10); 
+      }else if(cx<-100){
+        // animate out left
+        storeCardForUndo(card);
+        animateSwipeOut(card,cx,-10);
+      }else{
+        card.style.transform=`translate(-50%,-50%)`;
         overlay.style.background='transparent';
         leftIcon.style.display='none';
         rightIcon.style.display='none';
@@ -709,10 +753,10 @@ function showResults(){
       if(!dragging)return;
       currentX=e.touches[0].clientX-startX;
       card.style.transform=`translate(${currentX}px,-50%) rotate(${currentX/20}deg)`;
-      updateSwipeVisual();
+      updateSwipeVisual(currentX);
     });
     card.addEventListener('touchend',()=>{
-      endSwipe(card,currentX);
+      endSwipe(currentX);
       dragging=false;
     });
 
@@ -725,15 +769,15 @@ function showResults(){
       if(!dragging)return;
       currentX=e.clientX-startX;
       card.style.transform=`translate(${currentX}px,-50%) rotate(${currentX/20}deg)`;
-      updateSwipeVisual();
+      updateSwipeVisual(currentX);
     });
     card.addEventListener('mouseup',()=>{
-      endSwipe(card,currentX);
+      endSwipe(currentX);
       dragging=false;
     });
     card.addEventListener('mouseleave',()=>{
       if(dragging){
-        endSwipe(card,currentX);
+        endSwipe(currentX);
         dragging=false;
       }
     });
@@ -741,49 +785,15 @@ function showResults(){
 
   document.getElementById('rejectBtn').addEventListener('click',()=>{
     const topCard=getTopCard();
-    if(topCard) swipeCard(topCard,-200);
+    if(topCard) buttonSwipe(topCard,-1);
   });
   document.getElementById('likeBtn').addEventListener('click',()=>{
     const topCard=getTopCard();
-    if(topCard) swipeCard(topCard,200);
+    if(topCard) buttonSwipe(topCard,1);
   });
   document.getElementById('undoBtn').addEventListener('click',()=>{
     undoLastSwipe();
   });
-}
-
-function endSwipe(card,currentX){
-  const overlay=card.querySelector('.swipe-overlay');
-  const leftIcon=card.querySelector('.swipe-icon.left');
-  const rightIcon=card.querySelector('.swipe-icon.right');
-  if(currentX>100){
-    storeCardForUndo(card);
-    card.style.transform=`translate(1000px,-50%)`;
-    setTimeout(()=>card.remove(),300);
-  }else if(currentX<-100){
-    storeCardForUndo(card);
-    card.style.transform=`translate(-1000px,-50%)`;
-    setTimeout(()=>card.remove(),300);
-  }else{
-    card.style.transform=`translate(-50%,-50%)`;
-    overlay.style.background='transparent';
-    if(leftIcon) leftIcon.style.display='none';
-    if(rightIcon) rightIcon.style.display='none';
-  }
-}
-
-function getTopCard(){
-  const cards=[...document.querySelectorAll('.card')];
-  if(cards.length===0)return null;
-  return cards.reduce((top,c)=>{
-    return parseInt(c.style.zIndex)>parseInt(top.style.zIndex)?c:top;
-  });
-}
-
-function swipeCard(card,direction){
-  storeCardForUndo(card);
-  card.style.transform=`translate(${direction>0?1000:-1000}px,-50%)`;
-  setTimeout(()=>card.remove(),300);
 }
 
 function storeCardForUndo(card){
@@ -828,18 +838,18 @@ function undoLastSwipe(){
     <strong>Climate:</strong> ${lastCardData.Climate}</p>
     <a href="${lastCardData.Reflink}" target="_blank">Book Now</a>
     <div class="swipe-icon left" style="display:none;">
-      <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 
-      10.59 6.41 5 5 6.41 10.59 12 5 17.59 
-      6.41 19 12 13.41 17.59 19 19 17.59 
-      13.41 12z"/></svg>
-    </div>
-    <div class="swipe-icon right" style="display:none;">
       <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 
       15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 
       3c1.74 0 3.41.81 4.5 2.09C13.09 
       3.81 14.76 3 16.5 3 19.58 3 22 
       5.42 22 8.5c0 3.78-3.4 6.86-8.55 
       11.54L12 21.35z"/></svg>
+    </div>
+    <div class="swipe-icon right" style="display:none;">
+      <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 
+      10.59 6.41 5 5 6.41 10.59 12 5 17.59 
+      6.41 19 12 13.41 17.59 19 19 17.59 
+      13.41 12z"/></svg>
     </div>
   `;
   cardStack.appendChild(newCard);
@@ -851,21 +861,37 @@ function undoLastSwipe(){
   const leftIcon=newCard.querySelector('.swipe-icon.left');
   const rightIcon=newCard.querySelector('.swipe-icon.right');
 
-  function updateSwipeVisual(){
-    const percent = currentX / (newCard.offsetWidth/2);
+  function updateSwipeVisual(cx){
+    const percent = cx/(newCard.offsetWidth/2);
+    const absP = Math.min(Math.abs(percent),1);
     if(percent < 0) {
-      overlay.style.background=`rgba(255,82,82,${Math.min(Math.abs(percent),1)*0.3})`;
-      leftIcon.style.display='block';
-      leftIcon.style.opacity=Math.min(Math.abs(percent),1);
-      leftIcon.style.transform=`translateY(-50%) scale(${0.5+Math.min(Math.abs(percent),1)*0.5})`;
-      rightIcon.style.display='none';
-    } else if(percent > 0) {
-      overlay.style.background=`rgba(76,175,80,${Math.min(percent,1)*0.3})`;
+      overlay.style.background=`rgba(255,82,82,${absP})`;
       rightIcon.style.display='block';
-      rightIcon.style.opacity=Math.min(percent,1);
-      rightIcon.style.transform=`translateY(-50%) scale(${0.5+Math.min(percent,1)*0.5})`;
+      rightIcon.style.opacity=absP;
+      rightIcon.style.transform=`translateY(-50%) scale(${0.5+absP*0.5})`;
       leftIcon.style.display='none';
+    } else if(percent > 0) {
+      overlay.style.background=`rgba(76,175,80,${absP})`;
+      leftIcon.style.display='block';
+      leftIcon.style.opacity=absP;
+      leftIcon.style.transform=`translateY(-50%) scale(${0.5+absP*0.5})`;
+      rightIcon.style.display='none';
     } else {
+      overlay.style.background='transparent';
+      leftIcon.style.display='none';
+      rightIcon.style.display='none';
+    }
+  }
+
+  function endSwipe(cx){
+    if(cx>100){
+      storeCardForUndo(newCard);
+      animateSwipeOut(newCard,cx,10);
+    }else if(cx<-100){
+      storeCardForUndo(newCard);
+      animateSwipeOut(newCard,cx,-10);
+    }else{
+      newCard.style.transform=`translate(-50%,-50%)`;
       overlay.style.background='transparent';
       leftIcon.style.display='none';
       rightIcon.style.display='none';
@@ -880,10 +906,10 @@ function undoLastSwipe(){
     if(!dragging)return;
     currentX=e.touches[0].clientX-startX;
     newCard.style.transform=`translate(${currentX}px,-50%) rotate(${currentX/20}deg)`;
-    updateSwipeVisual();
+    updateSwipeVisual(currentX);
   });
   newCard.addEventListener('touchend',()=>{
-    endSwipe(newCard,currentX);
+    endSwipe(currentX);
     dragging=false;
   });
 
@@ -895,18 +921,108 @@ function undoLastSwipe(){
     if(!dragging)return;
     currentX=e.clientX-startX;
     newCard.style.transform=`translate(${currentX}px,-50%) rotate(${currentX/20}deg)`;
-    updateSwipeVisual();
+    updateSwipeVisual(currentX);
   });
   newCard.addEventListener('mouseup',()=>{
-    endSwipe(newCard,currentX);
+    endSwipe(currentX);
     dragging=false;
   });
   newCard.addEventListener('mouseleave',()=>{
     if(dragging){
-      endSwipe(newCard,currentX);
+      endSwipe(currentX);
       dragging=false;
     }
   });
+}
+
+function getTopCard(){
+  const cards=[...document.querySelectorAll('.card')];
+  if(cards.length===0)return null;
+  return cards.reduce((top,c)=>{
+    return parseInt(c.style.zIndex)>parseInt(top.style.zIndex)?c:top;
+  });
+}
+
+// Animate the card out in code to show same effect as dragging
+function buttonSwipe(card,direction){
+  // direction: -1 for left(X), 1 for right(heart)
+  storeCardForUndo(card);
+  animateSwipeOut(card,0,direction*20); // start at currentX=0, move in steps of 20 or -20
+}
+
+// Animate swipe out with steps
+function animateSwipeOut(card,startX,step){
+  let currentX=startX;
+  const overlay=card.querySelector('.swipe-overlay');
+  const leftIcon=card.querySelector('.swipe-icon.left');
+  const rightIcon=card.querySelector('.swipe-icon.right');
+
+  function updateSwipeVisual(cx){
+    const percent = cx/(card.offsetWidth/2);
+    const absP = Math.min(Math.abs(percent),1);
+    if(percent < 0) {
+      overlay.style.background=`rgba(255,82,82,${absP})`;
+      rightIcon.style.display='block';
+      rightIcon.style.opacity=absP;
+      rightIcon.style.transform=`translateY(-50%) scale(${0.5+absP*0.5})`;
+      leftIcon.style.display='none';
+    } else if(percent > 0) {
+      overlay.style.background=`rgba(76,175,80,${absP})`;
+      leftIcon.style.display='block';
+      leftIcon.style.opacity=absP;
+      leftIcon.style.transform=`translateY(-50%) scale(${0.5+absP*0.5})`;
+      rightIcon.style.display='none';
+    }
+  }
+
+  function animate(){
+    currentX+=step;
+    card.style.transform=`translate(${currentX}px,-50%) rotate(${currentX/20}deg)`;
+    updateSwipeVisual(currentX);
+    if(Math.abs(currentX)>1000){ 
+      card.remove(); 
+    } else {
+      requestAnimationFrame(animate);
+    }
+  }
+  requestAnimationFrame(animate);
+}
+
+function animateSwipeOut(card,startX,step){
+  let currentX=startX;
+  const overlay=card.querySelector('.swipe-overlay');
+  const leftIcon=card.querySelector('.swipe-icon.left');
+  const rightIcon=card.querySelector('.swipe-icon.right');
+
+  function updateSwipeVisual(cx){
+    const percent = cx/(card.offsetWidth/2);
+    const absP = Math.min(Math.abs(percent),1);
+    if(percent < 0) {
+      overlay.style.background=`rgba(255,82,82,${absP})`;
+      rightIcon.style.display='block';
+      rightIcon.style.opacity=absP;
+      rightIcon.style.transform=`translateY(-50%) scale(${0.5+absP*0.5})`;
+      leftIcon.style.display='none';
+    } else if(percent > 0) {
+      overlay.style.background=`rgba(76,175,80,${absP})`;
+      leftIcon.style.display='block';
+      leftIcon.style.opacity=absP;
+      leftIcon.style.transform=`translateY(-50%) scale(${0.5+absP*0.5})`;
+      rightIcon.style.display='none';
+    }
+  }
+
+  function animate(){
+    currentX+=step;
+    card.style.transform=`translate(${currentX}px,-50%) rotate(${currentX/20}deg)`;
+    updateSwipeVisual(currentX);
+    if(Math.abs(currentX)>1000){ 
+      card.remove(); 
+    } else {
+      requestAnimationFrame(animate);
+    }
+  }
+  requestAnimationFrame(animate);
 }
 </script>
 </body>
