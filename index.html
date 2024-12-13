@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body{
+  font-family:Arial, sans-serif;
+  margin:20px;
+  background:#f0f0f0;
+  color:#333;
+}
+h1{
+  text-align:center;
+  margin-bottom:20px;
+}
+.filter-container{
+  display:flex;
+  flex-wrap:wrap;
+  gap:15px;
+  justify-content:center;
+  margin-bottom:20px;
+}
+.filter-block{
+  display:flex;
+  flex-direction:column;
+}
+select{
+  padding:5px;
+}
+button{
+  cursor:pointer;
+  background:#4CAF50;
+  color:#fff;
+  border:none;
+  padding:10px 20px;
+  margin:20px auto;
+  display:block;
+  font-size:16px;
+  border-radius:5px;
+}
+button:hover{
+  background:#45a049;
+}
+.result-container{
+  background:#fff;
+  padding:20px;
+  border-radius:5px;
+  max-width:400px;
+  margin:20px auto;
+  text-align:center;
+  display:none;
+}
+.result-container h2{
+  margin-bottom:10px;
+}
+.result-container a{
+  display:inline-block;
+  margin-top:10px;
+  background:#008CBA;
+  color:#fff;
+  padding:10px 15px;
+  text-decoration:none;
+  border-radius:5px;
+}
+.result-container a:hover{
+  background:#007B9A;
+}
+</style>
+<title>Travel Recommender</title>
+</head>
+<body>
+<h1>Find Your Perfect Destination</h1>
+<div class="filter-container">
+  <div class="filter-block">
+    <label for="regionFilter">Region:</label>
+    <select id="regionFilter">
+      <option value="">Any</option>
+      <option value="Europe">Europe</option>
+      <option value="Asia">Asia</option>
+      <option value="Americas">Americas</option>
+      <option value="Oceania">Oceania</option>
+      <option value="Africa">Africa</option>
+    </select>
+  </div>
+  <div class="filter-block">
+    <label for="budgetFilter">Budget Level:</label>
+    <select id="budgetFilter">
+      <option value="">Any</option>
+      <option value="Cheap">Cheap</option>
+      <option value="Mid-range">Mid-range</option>
+      <option value="Luxury">Luxury</option>
+    </select>
+  </div>
+  <div class="filter-block">
+    <label for="activitiesFilter">Activities (choose one):</label>
+    <select id="activitiesFilter">
+      <option value="">Any</option>
+      <option value="Beach">Beach</option>
+      <option value="Hiking">Hiking</option>
+      <option value="Nightlife">Nightlife</option>
+      <option value="Culture">Culture</option>
+      <option value="Shopping">Shopping</option>
+    </select>
+  </div>
+  <div class="filter-block">
+    <label for="climateFilter">Climate:</label>
+    <select id="climateFilter">
+      <option value="">Any</option>
+      <option value="Warm">Warm</option>
+      <option value="Cold">Cold</option>
+      <option value="Temperate">Temperate</option>
+    </select>
+  </div>
+</div>
+<button id="findDestinationBtn">Find a Random Destination</button>
+<div class="result-container" id="resultContainer">
+  <h2 id="destName"></h2>
+  <p id="destInfo"></p>
+  <a id="destLink" href="#" target="_blank">Book Now</a>
+</div>
+<script>
+const GSheetURL="https://docs.google.com/spreadsheets/d/e/2PACX-1vQbq36KXieC6aKe3KfwM7162IGCZE-WAKHJ7xyScSLrvs92G64vp4BkFaAn0ikrObiBY0jZUYX1Ugpz/pub?gid=0&single=true&output=csv"; // Replace with your actual published CSV link
+
+async function fetchData(){
+  const response=await fetch(GSheetURL);
+  const text=await response.text();
+  const data=csvToArray(text);
+  // data is now an array of objects with keys Destination,Region,BudgetLevel,Activities,Climate,Reflink
+  return data;
+}
+
+function csvToArray(str,delimiter=","){
+  const headers=str.slice(0,str.indexOf("\n")).split(delimiter).map(h=>h.trim());
+  const rows=str.slice(str.indexOf("\n")+1).split("\n");
+  const arr=rows.map(row=>{
+    const values=row.split(delimiter).map(v=>v.trim());
+    let obj={};
+    headers.forEach((h,i)=>obj[h]=values[i]?values[i]:"");
+    return obj;
+  }).filter(o=>o.Destination); // remove empty lines
+  return arr;
+}
+
+function filterData(data,region,budget,activity,climate){
+  return data.filter(item=>{
+    let regionMatch=!region||item.Region.split(",").map(i=>i.trim()).includes(region);
+    let budgetMatch=!budget||item.BudgetLevel.split(",").map(i=>i.trim()).includes(budget);
+    let activityMatch=!activity||item.Activities.split(",").map(i=>i.trim()).includes(activity);
+    let climateMatch=!climate||item.Climate.split(",").map(i=>i.trim()).includes(climate);
+    return regionMatch&&budgetMatch&&activityMatch&&climateMatch;
+  });
+}
+
+function getRandomItem(arr){
+  if(arr.length===0)return null;
+  return arr[Math.floor(Math.random()*arr.length)];
+}
+
+let allData=[];
+document.getElementById("findDestinationBtn").addEventListener("click",()=>{
+  const region=document.getElementById("regionFilter").value;
+  const budget=document.getElementById("budgetFilter").value;
+  const activity=document.getElementById("activitiesFilter").value;
+  const climate=document.getElementById("climateFilter").value;
+  const filtered=filterData(allData,region,budget,activity,climate);
+  const pick=getRandomItem(filtered);
+  const resultContainer=document.getElementById("resultContainer");
+  if(!pick){
+    resultContainer.style.display="none";
+    alert("No matching destinations found!");
+    return;
+  }
+  document.getElementById("destName").textContent=pick.Destination;
+  document.getElementById("destInfo").textContent=`Region: ${pick.Region} | Budget: ${pick.BudgetLevel} | Activities: ${pick.Activities} | Climate: ${pick.Climate}`;
+  document.getElementById("destLink").href=pick.Reflink;
+  resultContainer.style.display="block";
+});
+
+fetchData().then(data=>{
+  allData=data;
+});
+</script>
+</body>
+</html>
