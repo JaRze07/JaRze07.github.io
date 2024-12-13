@@ -1,79 +1,164 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Playful Travel Recommender</title>
 <style>
 body{
-  font-family:Arial, sans-serif;
-  margin:20px;
-  background:#f0f0f0;
-  color:#333;
+  font-family:'Helvetica Neue',Arial,sans-serif;
+  background:#f7f7f7;
+  margin:0;padding:0;
+  display:flex;flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  min-height:100vh;
+}
+header{
+  width:100%;
+  background:#FF8A65;
+  color:#fff;
+  padding:20px;
+  text-align:center;
+  box-shadow:0 2px 5px rgba(0,0,0,0.2);
 }
 h1{
-  text-align:center;
-  margin-bottom:20px;
+  margin:0;
+  font-size:24px;
 }
-.filter-container{
-  display:flex;
-  flex-wrap:wrap;
-  gap:15px;
-  justify-content:center;
-  margin-bottom:20px;
-}
-.filter-block{
+.wizard{
+  background:#fff;
+  max-width:400px;
+  width:90%;
+  margin-top:20px;
+  padding:20px;
+  border-radius:10px;
+  box-shadow:0 2px 10px rgba(0,0,0,0.1);
   display:flex;
   flex-direction:column;
+  gap:15px;
+  transition:all 0.3s ease;
 }
-select{
-  padding:5px;
+.wizard-step{
+  display:none;
+  flex-direction:column;
+  gap:10px;
+}
+.wizard-step.active{
+  display:flex;
+}
+label{
+  font-weight:bold;
+  font-size:14px;
+}
+select, .activities-container{
+  width:100%;
+  padding:10px;
+  border:1px solid #ccc;
+  border-radius:5px;
+  background:#fff;
+  font-size:14px;
+}
+.activities-container{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+.activity-item{
+  background:#eee;
+  border-radius:20px;
+  padding:5px 10px;
+  cursor:pointer;
+  user-select:none;
+}
+.activity-item.selected{
+  background:#FF8A65;
+  color:#fff;
 }
 button{
-  cursor:pointer;
-  background:#4CAF50;
-  color:#fff;
-  border:none;
   padding:10px 20px;
-  margin:20px auto;
-  display:block;
-  font-size:16px;
+  border:none;
   border-radius:5px;
+  font-size:16px;
+  cursor:pointer;
+  background:#FF8A65;
+  color:#fff;
+  transition:background 0.3s;
+  margin-top:10px;
 }
 button:hover{
-  background:#45a049;
+  background:#ff7a53;
 }
-.result-container{
-  background:#fff;
-  padding:20px;
-  border-radius:5px;
+.results-section{
+  width:100%;
   max-width:400px;
-  margin:20px auto;
+  margin-top:20px;
+  position:relative;
+  height:500px;
+  overflow:hidden;
+}
+.card-stack{
+  position:absolute;
+  top:0;left:50%;
+  transform:translateX(-50%);
+  width:100%;
+  height:100%;
+}
+.card{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  width:90%;
+  background:#fff;
+  border-radius:10px;
+  box-shadow:0 2px 10px rgba(0,0,0,0.1);
+  padding:20px;
   text-align:center;
-  display:none;
+  transition:transform 0.3s;
+  user-select:none;
+  max-height:80%;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
 }
-.result-container h2{
-  margin-bottom:10px;
+.card h2{
+  margin:0 0 10px;
 }
-.result-container a{
+.card p{
+  margin:0;
+  font-size:14px;
+  line-height:1.4;
+}
+.card a{
   display:inline-block;
   margin-top:10px;
-  background:#008CBA;
+  background:#4CAF50;
   color:#fff;
-  padding:10px 15px;
+  padding:10px 20px;
   text-decoration:none;
   border-radius:5px;
+  font-size:14px;
 }
-.result-container a:hover{
-  background:#007B9A;
+.hidden{
+  display:none;
+}
+.swipe-hint{
+  text-align:center;
+  margin:20px 0;
+  color:#666;
+  font-size:14px;
 }
 </style>
-<title>Travel Recommender</title>
 </head>
 <body>
-<h1>Find Your Perfect Destination</h1>
-<div class="filter-container">
-  <div class="filter-block">
-    <label for="regionFilter">Region:</label>
+<header>
+<h1>Find Your Next Adventure</h1>
+</header>
+
+<div class="wizard">
+  <div class="wizard-step step-1 active">
+    <label for="regionFilter">Select Region:</label>
     <select id="regionFilter">
       <option value="">Any</option>
       <option value="Europe">Europe</option>
@@ -82,8 +167,9 @@ button:hover{
       <option value="Oceania">Oceania</option>
       <option value="Africa">Africa</option>
     </select>
+    <button class="next-btn">Next</button>
   </div>
-  <div class="filter-block">
+  <div class="wizard-step step-2">
     <label for="budgetFilter">Budget Level:</label>
     <select id="budgetFilter">
       <option value="">Any</option>
@@ -91,19 +177,22 @@ button:hover{
       <option value="Mid-range">Mid-range</option>
       <option value="Luxury">Luxury</option>
     </select>
+    <button class="prev-btn">Back</button>
+    <button class="next-btn">Next</button>
   </div>
-  <div class="filter-block">
-    <label for="activitiesFilter">Activities (choose one):</label>
-    <select id="activitiesFilter">
-      <option value="">Any</option>
-      <option value="Beach">Beach</option>
-      <option value="Hiking">Hiking</option>
-      <option value="Nightlife">Nightlife</option>
-      <option value="Culture">Culture</option>
-      <option value="Shopping">Shopping</option>
-    </select>
+  <div class="wizard-step step-3">
+    <label>Select Activities (multi-select):</label>
+    <div class="activities-container" id="activitiesContainer">
+      <div class="activity-item" data-activity="Beach">Beach</div>
+      <div class="activity-item" data-activity="Hiking">Hiking</div>
+      <div class="activity-item" data-activity="Nightlife">Nightlife</div>
+      <div class="activity-item" data-activity="Culture">Culture</div>
+      <div class="activity-item" data-activity="Shopping">Shopping</div>
+    </div>
+    <button class="prev-btn">Back</button>
+    <button class="next-btn">Next</button>
   </div>
-  <div class="filter-block">
+  <div class="wizard-step step-4">
     <label for="climateFilter">Climate:</label>
     <select id="climateFilter">
       <option value="">Any</option>
@@ -111,23 +200,59 @@ button:hover{
       <option value="Cold">Cold</option>
       <option value="Temperate">Temperate</option>
     </select>
+    <button class="prev-btn">Back</button>
+    <button class="finish-btn">Find Destinations</button>
   </div>
 </div>
-<button id="findDestinationBtn">Find a Random Destination</button>
-<div class="result-container" id="resultContainer">
-  <h2 id="destName"></h2>
-  <p id="destInfo"></p>
-  <a id="destLink" href="#" target="_blank">Book Now</a>
+
+<div class="results-section hidden">
+  <div class="swipe-hint">Swipe left or right on the cards</div>
+  <div class="card-stack" id="cardStack"></div>
 </div>
+
 <script>
-const GSheetURL="https://docs.google.com/spreadsheets/d/e/2PACX-1vQbq36KXieC6aKe3KfwM7162IGCZE-WAKHJ7xyScSLrvs92G64vp4BkFaAn0ikrObiBY0jZUYX1Ugpz/pub?gid=0&single=true&output=csv"; // Replace with your actual published CSV link
+const GSheetURL="https://docs.google.com/spreadsheets/d/e/2PACX-1vQbq36KXieC6aKe3KfwM7162IGCZE-WAKHJ7xyScSLrvs92G64vp4BkFaAn0ikrObiBY0jZUYX1Ugpz/pub?gid=0&single=true&output=csv";
+
+let allData=[];
+
+// Wizard navigation
+const steps=document.querySelectorAll('.wizard-step');
+let currentStep=0;
+document.querySelectorAll('.next-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    if(currentStep<steps.length-1){
+      steps[currentStep].classList.remove('active');
+      currentStep++;
+      steps[currentStep].classList.add('active');
+    }
+  });
+});
+document.querySelectorAll('.prev-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    if(currentStep>0){
+      steps[currentStep].classList.remove('active');
+      currentStep--;
+      steps[currentStep].classList.add('active');
+    }
+  });
+});
+
+document.querySelector('.finish-btn').addEventListener('click',()=>{
+  steps[currentStep].classList.remove('active');
+  // Now filter and show results
+  showResults();
+});
+
+document.getElementById('activitiesContainer').addEventListener('click',e=>{
+  if(e.target.classList.contains('activity-item')){
+    e.target.classList.toggle('selected');
+  }
+});
 
 async function fetchData(){
   const response=await fetch(GSheetURL);
   const text=await response.text();
-  const data=csvToArray(text);
-  // data is now an array of objects with keys Destination,Region,BudgetLevel,Activities,Climate,Reflink
-  return data;
+  return csvToArray(text);
 }
 
 function csvToArray(str,delimiter=","){
@@ -138,45 +263,93 @@ function csvToArray(str,delimiter=","){
     let obj={};
     headers.forEach((h,i)=>obj[h]=values[i]?values[i]:"");
     return obj;
-  }).filter(o=>o.Destination); // remove empty lines
+  }).filter(o=>o.Destination);
   return arr;
 }
 
-function filterData(data,region,budget,activity,climate){
+function filterData(data,region,budget,activities,climate){
   return data.filter(item=>{
     let regionMatch=!region||item.Region.split(",").map(i=>i.trim()).includes(region);
     let budgetMatch=!budget||item.BudgetLevel.split(",").map(i=>i.trim()).includes(budget);
-    let activityMatch=!activity||item.Activities.split(",").map(i=>i.trim()).includes(activity);
     let climateMatch=!climate||item.Climate.split(",").map(i=>i.trim()).includes(climate);
-    return regionMatch&&budgetMatch&&activityMatch&&climateMatch;
+
+    // For activities, we will ensure at least one of the selected activities is present
+    let itemActivities=item.Activities.split(",").map(i=>i.trim());
+    let activitiesMatch=true;
+    if(activities.length>0){
+      activitiesMatch=activities.some(a=>itemActivities.includes(a));
+    }
+
+    return regionMatch&&budgetMatch&&activitiesMatch&&climateMatch;
   });
 }
 
-function getRandomItem(arr){
-  if(arr.length===0)return null;
-  return arr[Math.floor(Math.random()*arr.length)];
-}
+function showResults(){
+  const region=document.getElementById('regionFilter').value;
+  const budget=document.getElementById('budgetFilter').value;
+  const climate=document.getElementById('climateFilter').value;
+  const selectedActivities=[...document.querySelectorAll('.activity-item.selected')].map(a=>a.getAttribute('data-activity'));
 
-let allData=[];
-document.getElementById("findDestinationBtn").addEventListener("click",()=>{
-  const region=document.getElementById("regionFilter").value;
-  const budget=document.getElementById("budgetFilter").value;
-  const activity=document.getElementById("activitiesFilter").value;
-  const climate=document.getElementById("climateFilter").value;
-  const filtered=filterData(allData,region,budget,activity,climate);
-  const pick=getRandomItem(filtered);
-  const resultContainer=document.getElementById("resultContainer");
-  if(!pick){
-    resultContainer.style.display="none";
+  const filtered=filterData(allData,region,budget,selectedActivities,climate);
+  const resultsSection=document.querySelector('.results-section');
+  const cardStack=document.getElementById('cardStack');
+  cardStack.innerHTML='';
+  if(filtered.length===0){
     alert("No matching destinations found!");
     return;
   }
-  document.getElementById("destName").textContent=pick.Destination;
-  document.getElementById("destInfo").textContent=`Region: ${pick.Region} | Budget: ${pick.BudgetLevel} | Activities: ${pick.Activities} | Climate: ${pick.Climate}`;
-  document.getElementById("destLink").href=pick.Reflink;
-  resultContainer.style.display="block";
-});
+  resultsSection.classList.remove('hidden');
 
+  // Shuffle the filtered results for randomness
+  for(let i=filtered.length-1;i>0;i--){
+    const j=Math.floor(Math.random()* (i+1));
+    [filtered[i],filtered[j]]=[filtered[j],filtered[i]];
+  }
+
+  filtered.forEach((dest,i)=>{
+    const card=document.createElement('div');
+    card.classList.add('card');
+    card.style.zIndex=filtered.length-i;
+    card.innerHTML=`
+      <h2>${dest.Destination}</h2>
+      <p><strong>Region:</strong> ${dest.Region}<br>
+      <strong>Budget:</strong> ${dest.BudgetLevel}<br>
+      <strong>Activities:</strong> ${dest.Activities}<br>
+      <strong>Climate:</strong> ${dest.Climate}</p>
+      <a href="${dest.Reflink}" target="_blank">Book Now</a>
+    `;
+    cardStack.appendChild(card);
+
+    let startX=0,currentX=0;
+    let dragging=false;
+    card.addEventListener('touchstart',e=>{
+      dragging=true;
+      startX=e.touches[0].clientX;
+    });
+    card.addEventListener('touchmove',e=>{
+      if(!dragging)return;
+      currentX=e.touches[0].clientX-startX;
+      card.style.transform=`translate(${currentX}px,-50%) rotate(${currentX/20}deg)`;
+    });
+    card.addEventListener('touchend',e=>{
+      dragging=false;
+      if(currentX>100){ 
+        // Swiped right (like)
+        card.style.transform=`translate(1000px,-50%)`;
+        setTimeout(()=>card.remove(),300);
+      }else if(currentX<-100){ 
+        // Swiped left (dislike)
+        card.style.transform=`translate(-1000px,-50%)`;
+        setTimeout(()=>card.remove(),300);
+      }else{
+        // Snap back
+        card.style.transform=`translate(-50%,-50%)`;
+      }
+    });
+  });
+}
+
+// Init
 fetchData().then(data=>{
   allData=data;
 });
