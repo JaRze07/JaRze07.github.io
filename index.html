@@ -149,7 +149,7 @@ h1 {
   transition:opacity 0.2s;
 }
 .checkbox-item.selected-item::before {
-  opacity:0.2;
+  opacity:0.5; /* More visible */
 }
 
 /* Buttons */
@@ -716,6 +716,7 @@ function showResults(){
 
 function initCard(card){
   let startX=0,currentX=0,dragging=false;
+  let moved=false; // to check if user actually moved >10px
   const overlay=card.querySelector('.swipe-overlay');
   const leftIcon=card.querySelector('.swipe-icon.left');
   const rightIcon=card.querySelector('.swipe-icon.right');
@@ -743,32 +744,45 @@ function initCard(card){
   }
 
   function endSwipe(cx){
+    if(!moved){
+      // If user didn't move much, just reset position
+      card.style.transform=`translate(-50%,-50%)`;
+      overlay.style.background='transparent';
+      leftIcon.style.display='none';
+      rightIcon.style.display='none';
+      return;
+    }
     if(cx>100){
       storeCardForUndo(card);
-      animateSwipeOut(card,cx,30); // Faster step
+      animateSwipeOut(card,cx,30); 
     }else if(cx<-100){
       storeCardForUndo(card);
-      animateSwipeOut(card,cx,-30); // Faster step
+      animateSwipeOut(card,cx,-30); 
     }else{
       card.style.transform=`translate(-50%,-50%)`;
       overlay.style.background='transparent';
       leftIcon.style.display='none';
       rightIcon.style.display='none';
     }
+    moved=false;
   }
 
   card.addEventListener('mousedown',e=>{
-    if(e.target.tagName.toLowerCase()==='a') return; // don't drag if clicking a link
-    e.preventDefault();
-    dragging=true;
+    // start drag from anywhere
     startX=e.clientX;
+    dragging=true;
+    moved=false;
   });
 
   card.addEventListener('mousemove',e=>{
     if(!dragging)return;
-    currentX=e.clientX-startX;
-    card.style.transform=`translate(${currentX}px,-50%) rotate(${currentX/20}deg)`;
-    updateSwipeVisual(currentX);
+    let diff=e.clientX-startX;
+    if(Math.abs(diff)>10){
+      moved=true;
+      currentX=diff;
+      card.style.transform=`translate(${currentX}px,-50%) rotate(${currentX/20}deg)`;
+      updateSwipeVisual(currentX);
+    }
   });
 
   card.addEventListener('mouseup',()=>{
@@ -784,23 +798,28 @@ function initCard(card){
   });
 
   card.addEventListener('touchstart',e=>{
-    if(e.target.tagName.toLowerCase()==='a') return; // don't drag if link
-    e.preventDefault();
-    dragging=true;
-    startX=e.touches[0].clientX;
- },{passive:false});
+    if(e.touches.length>0){
+      startX=e.touches[0].clientX;
+      dragging=true;
+      moved=false;
+    }
+  },{passive:false});
 
   card.addEventListener('touchmove',e=>{
     if(!dragging)return;
-    currentX=e.touches[0].clientX-startX;
-    card.style.transform=`translate(${currentX}px,-50%) rotate(${currentX/20}deg)`;
-    updateSwipeVisual(currentX);
- },{passive:false});
+    let diff=e.touches[0].clientX-startX;
+    if(Math.abs(diff)>10){
+      moved=true;
+      currentX=diff;
+      card.style.transform=`translate(${currentX}px,-50%) rotate(${currentX/20}deg)`;
+      updateSwipeVisual(currentX);
+    }
+  },{passive:false});
 
   card.addEventListener('touchend',()=>{
     endSwipe(currentX);
     dragging=false;
- },{passive:false});
+  },{passive:false});
 }
 
 function storeCardForUndo(card){
@@ -906,7 +925,6 @@ function animateSwipeOut(card,startX,step){
     card.style.transform=`translate(${currentX}px,-50%) rotate(${currentX/20}deg)`;
     updateSwipeVisual(currentX);
     if(Math.abs(currentX)>300){ 
-      // vanish after ~300px for clearer animation
       card.remove(); 
     } else {
       requestAnimationFrame(animate);
